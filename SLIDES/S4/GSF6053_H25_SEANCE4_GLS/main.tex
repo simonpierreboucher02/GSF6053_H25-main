@@ -1,0 +1,595 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usetheme{default}
+\usecolortheme{seagull}
+
+\title{Extensions au modèle linéaire simple \\(Séance 4)}
+\author{Simon-Pierre Boucher}
+\institute{Département de finance, assurance et immobilier\\ Faculté des sciences de l'administration\\ Université Laval}
+\date[Hiver 2025]{4 février 2025}
+% Configuration du pied de page avec logo en bas à droite
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.7\paperwidth,ht=2ex,dp=1ex,left]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.3\paperwidth,ht=2ex,dp=1ex,right]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{0.5em}
+      \insertframenumber{} / \inserttotalframenumber\hspace*{0.5em}
+      \raisebox{0.2cm}{\includegraphics[height=0.6cm]{logo_universite_laval.png}} % Ajustement du logo
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamertemplate{navigation symbols}{} % Supprime les symboles de navigation par défaut
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+\frametitle{Références}
+\textbf{Obligatoires:}
+\begin{itemize}
+   
+    \item Woolridge: chapitres 3, 8, 12.
+\end{itemize}
+\textbf{Complémentaires:}
+\begin{itemize}
+    \item Gujarati et Porter: chapitres 10, 11, 12, 13 et appendice C.
+    \item Greene: chapitres 2, 3, 4, 5, 9, 14, 20 C et D
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Plan de la séance}
+\begin{itemize}
+    \item Multicolinéarité
+    \item Problèmes de spécification
+    \item Erreurs non-sphériques
+    \item Les Moindres carrés généralisés
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Multicolinéarité}
+\begin{itemize}
+    \item Une des hypothèses du modèle linéaire classique est qu’il n’y a pas de colinéarité parfaite entre les variables explicatives dans la matrice \( X \).
+    \item Supposons le modèle suivant :
+    \[
+    Y_i = \beta_0 + \beta_1 X_{1i} + \beta_2 X_{2i} + \dots + \beta_k X_{ki} + \epsilon_i
+    \]
+    \item Multicolinéarité parfaite (ou exacte) :
+    \[
+    \lambda_1 X_{1i} + \lambda_2 X_{2i} + \dots + \lambda_k X_{ki} = 0
+    \]
+    \item Multicolinéarité imparfaite :
+    \[
+    \lambda_1 X_{1i} + \lambda_2 X_{2i} + \dots + \lambda_k X_{ki} + v_i = 0
+    \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Multicolinéarité (suite)}
+\begin{itemize}
+    \item Dans le cas de la multicolinéarité parfaite :
+    \begin{itemize}
+        \item Alors la matrice \( (X^T X) \) n’est plus de plein rang colonne et n’est pas inversible, car une des colonnes peut être écrite en fonction linéaire des autres.
+        \item Il survient alors un problème majeur au niveau de l’identification des paramètres.
+    \end{itemize}
+    \item Dans le cas de la multicolinéarité imparfaite :
+    \begin{itemize}
+        \item Les régressseurs ne sont pas parfaitement corrélés, mais fortement corrélés à un choc près.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Multicolinéarité - Conséquences}
+\begin{itemize}
+    \item \textbf{Les conséquences de la multicolinéarité}
+    \begin{itemize}
+        \item La multicolinéarité imparfaite ne viole pas les hypothèses du théorème de Gauss-Markov.
+        \item Les estimateurs des MCO en cas de multicolinéarité gardent la propriété BLUE.
+    \end{itemize}
+    \item Les variances et les erreurs standard des estimations des coefficients de régression vont augmenter.
+    \begin{itemize}
+        \item Cela signifie des t-statistiques plus faibles.
+    \end{itemize}
+    \item L’ajustement global de l’équation de régression ne sera pas affecté par la multicolinéarité.
+    \begin{itemize}
+        \item Cela signifie également que la prévision et la prédiction ne seront pas affectées.
+    \end{itemize}
+    \item Les coefficients de régression seront sensibles aux spécifications.
+    \begin{itemize}
+        \item Les coefficients de régression peuvent changer considérablement lorsque des variables sont ajoutées ou supprimées.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Multicolinéarité - Détection}
+\begin{itemize}
+    \item \textbf{La détection de la multicolinéarité}
+    \begin{itemize}
+        \item Coefficients de corrélation élevés :
+        \begin{itemize}
+            \item Les corrélations par paires entre les variables indépendantes peuvent être élevées (en valeur absolue).
+            \item Règle générale : si la corrélation est > 0.8, il peut y avoir une forte multicolinéarité.
+        \end{itemize}
+        \item \( R^2 \) élevé avec des valeurs de t-statistiques faibles :
+        \begin{itemize}
+            \item Il est possible que les coefficients de régression individuels ne soient pas significatifs mais que l’ajustement global de l’équation soit élevé.
+        \end{itemize}
+        \item Facteurs d’inflation de la variance (VIF) élevés :
+        \begin{itemize}
+            \item VIF quantifie dans quelle mesure la multicolinéarité a augmenté la variance d’un coefficient estimé.
+            \item Il examine dans quelle mesure une variable explicative peut être expliquée par toutes les autres variables explicatives de l’équation.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+\begin{frame}
+\frametitle{Multicolinéarité - Remèdes}
+\begin{itemize}
+    \item \textbf{Remèdes contre la multicolinéarité}
+    \begin{itemize}
+        \item Ne rien faire
+        \item Abandon d’une variable redondante :
+        \begin{itemize}
+            \item Si une variable est redondante, elle n’aurait jamais dû être incluse dans le modèle en premier lieu. Ainsi, l’abandonner ne fait que corriger une erreur de spécification.
+            \item Utilisez la théorie économique pour guider votre choix de la variable à supprimer.
+        \end{itemize}
+        \item Transformer les variables multicolinéaires :
+        \begin{itemize}
+            \item Vous pouvez réduire la multicolinéarité en respécifiant le modèle, par exemple, en créant une combinaison des variables multicolinéaires.
+        \end{itemize}
+        \item Augmenter la taille de l’échantillon :
+        \begin{itemize}
+            \item L’augmentation de la taille de l’échantillon améliore la précision d’un estimateur et réduit les effets négatifs de la multicolinéarité.
+            \item En général, l’ajout de données n’est pas possible.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Problèmes de spécification}
+\begin{itemize}
+    \item Le modèle des OLS postule que nous avons la forme vraie fonctionnelle qui définit la relation entre \( Y \) et les régresseurs \( X \).
+    \item Comment savoir si nous avons les bons \( X \) ?
+    \item Quels sont les impacts de se tromper dans le choix de \( X \) ?
+    \item De façon générale, nous avons les guides suivants pour choisir les variables explicatives :
+    \begin{itemize}
+        \item Le modèle doit être admissible et possible à tester.
+        \item Le modèle doit être cohérent avec la théorie économique et financière.
+        \item Choisir des régresseurs exogènes au terme d’erreur.
+        \item Les paramètres estimés doivent être stables empiriquement.
+    \end{itemize}
+    \item Les résidus de régression. Sinon, on peut revisiter la spécification de \( X \) ou si elle est correcte corriger pour la non-sphéricité des erreurs.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Problèmes de spécification - Omission d’une variable explicative importante}
+\begin{itemize}
+    \item On suppose le vrai modèle suivant :
+    \[
+    Y_t = \beta_1 X_{1t} + \beta_2 X_{2t} + u_t
+    \]
+    \item Cependant, vous avez effectué l’estimation d’un modèle en omettant la variable indépendante \( X_2 \).
+    \[
+    Y_t = \beta_1 X_{1t} + u_t
+    \]
+    \item Étant donné que \( X_2 \) n’est pas inclus dans la régression, nous allons uniquement obtenir une solution pour l’estimateur \( \beta_1 \) :
+    \[
+    \hat{\beta}_1 = X_1^T \left( X_1^T X_1 \right)^{-1} X_1^T Y = \left( X_1^T Y \right) \left( X_1^T X_1 \right)^{-1}
+    \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Problèmes de spécification - Omission d’une variable explicative importante (suite)}
+\begin{itemize}
+    \item Afin de voir les effets de l’omission de la variable \( X_2 \), nous allons substituer dans l’équation de l’estimateur \( \hat{\beta}_1 \), l’équation du vrai modèle.
+    \[
+    \hat{\beta}_1 = \frac{X_1^T Y}{X_1^T X_1} = \frac{X_1^T (\beta_1 X_1 + \beta_2 X_2 + u)}{X_1^T X_1}
+    \]
+    \item Cela donne :
+    \[
+    \hat{\beta}_1 = \frac{X_1^T X_1 \beta_1 + X_1^T X_2 \beta_2 + X_1^T u}{X_1^T X_1}
+    \]
+    \item Ce qui nous mène à :
+    \[
+    \hat{\beta}_1 = \beta_1 + \frac{X_1^T X_2}{X_1^T X_1} \beta_2 + \frac{X_1^T u}{X_1^T X_1}
+    \]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Problèmes de spécification - Omission d’une variable explicative importante (suite)}
+\begin{itemize}
+    \item Nous allons maintenant prendre l'espérance de chaque côté de l'équation de \( \hat{\beta}_1 \):
+    \[
+    E(\hat{\beta}_1) = \beta_1 + E\left( \frac{\beta_2 X_1^T X_2}{X_1^T X_1} \right) + E\left( \frac{X_1^T u}{X_1^T X_1} \right)
+    \]
+    \item Sachant que \( E\left( \frac{X_1^T u}{X_1^T X_1} \right) = 0 \) et que \( \frac{X_1^T X_2}{X_1^T X_1} \) est le coefficient de régression de \( X_2 \) sur \( X_1 \), que nous représenterons par \( b_{21} \), cela donne :
+    \[
+    E(\hat{\beta}_1) = \beta_1 + \beta_2 b_{21}
+    \]
+    \item \( \hat{\beta}_1 \) sera un estimateur biaisé de \( \beta_1 \) : Le biais dépend du coefficient de la variable omise et du coefficient de la régression de la variable omise sur les variables incluses.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Problèmes de spécification - Inclusion d’une variable non pertinente}
+\begin{itemize}
+    \item On suppose le vrai modèle suivant :
+    \[
+    Y_t = \beta_1 X_{1t} + u_t
+    \]
+    \item Cependant, vous avez effectué l’estimation d’un modèle en ajoutant la variable indépendante \( X_2 \), qui est non pertinente au modèle :
+    \[
+    Y_t = \beta_1 X_{1t} + \beta_2 X_{2t} + u_t
+    \]
+    \item Nous avons donc les régressseurs \( X_1 \) et \( X_2 \) dans notre modèle.
+    \item On peut représenter les deux régressseurs dans la matrice \( X \) :
+    \[
+    X = \begin{pmatrix} X_1 \\ X_2 \end{pmatrix}
+    \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Problèmes de spécification - Inclusion d’une variable non pertinente (suite)}
+\begin{itemize}
+    \item Nous avons donc les régressseurs \( X_1 \) et \( X_2 \) dans notre modèle.
+    \item On peut représenter les deux régressseurs dans la matrice \( X \) :
+    \[
+    X = \begin{pmatrix} X_1 & X_2 \end{pmatrix}
+    \]
+    \item Sachant que dans le vrai modèle nous avons uniquement \( 1 \) comme régressseur, on peut écrire le régressseur du vrai modèle comme suit :
+    \[
+    X \times \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \begin{pmatrix} X_1 & X_2 \end{pmatrix} \times \begin{pmatrix} 1 \\ 0 \end{pmatrix}
+    \]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Problèmes de spécification - Inclusion d’une variable non pertinente (suite)}
+\begin{itemize}
+    \item Maintenant, nous allons substituer \( Y \) dans l’équation de l’estimateur \( \hat{\beta} \), par le vrai modèle.
+    \[
+    \hat{\beta} = (X^T X)^{-1} X^T Y
+    \]
+    \item En substituant \( Y = \beta_1 X_1 + u \), nous obtenons :
+    \[
+    \hat{\beta} = (X^T X)^{-1} X^T \left( \beta_1 X_1 + u \right)
+    \]
+    \item Cela donne :
+    \[
+    \hat{\beta} = (X^T X)^{-1} X^T \beta_1 X_1 + (X^T X)^{-1} X^T u
+    \]
+    \item Ce qui peut être réécrit comme :
+    \[
+    \hat{\beta} = \beta_1 \times \left( (X^T X)^{-1} X^T X_1 \right) + (X^T X)^{-1} X^T u
+    \]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Problèmes de spécification - Inclusion d’une variable non pertinente (suite)}
+\begin{itemize}
+    \item On applique l'espérance de chaque côté de l'équation de l'estimateur \( \hat{\beta} \) :
+    \[
+    E(\hat{\beta}) = \beta_1 \times \begin{pmatrix} 1 \\ 0 \end{pmatrix} + (X^T X)^{-1} X^T E(u)
+    \]
+    \item Sachant que \( E(u) = 0 \), cela donne :
+    \[
+    E(\hat{\beta}) = \beta_1 \times \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \beta_1
+    \]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Problèmes de spécification - Inclusion d’une variable non pertinente (suite)}
+\begin{itemize}
+    \item L'estimateur de \( \hat{\beta} \) restera un estimateur sans biais.
+    \item Pour cette raison, la littérature a souvent suggéré d'inclure plus de variables dans le doute pour ne pas en omettre.
+    \item Il n'est donc pas recommandé d'ajouter des variables sans avoir un indice économique sérieux qu'elles doivent être incluses dans le modèle.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Erreurs non-sphériques}
+\begin{itemize}
+    \item Le modèle linéaire comporte des hypothèses très strictes sur la matrice de variance-covariance des erreurs du modèle.
+    \item Celle-ci est diagonale et de forme :
+    \[
+    E(uu') = V = \sigma^2 I_t
+    \]
+    \item Cela implique que les erreurs du modèle sont dites homoscédastiques, c’est-à-dire que sa variance est constante dans le temps, ne dépend pas de variables exogènes et n’est pas autocorrélée.
+    \item C’est une hypothèse distributionnelle très forte surtout en coupe transversale.
+    \item Raisons pour rencontrer des erreurs non-sphériques sont nombreuses :
+    \begin{itemize}
+        \item Meilleure collection des données dans le temps (l'erreur devrait donc diminuer)
+        \item Présence d'observations aberrantes ou d'outliers
+        \item Mauvaise spécification du modèle
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Erreurs non-sphériques - Estimateurs pour des formes de matrices variance-covariance des erreurs plus générales}
+\begin{itemize}
+    \item Soit le modèle suivant :
+    \[
+    Y = X \beta + u
+    \]
+    \item Avec :
+    \[
+    E(uu') = V = \sigma^2 \Omega
+    \]
+    \item Où \( \Omega \) est une matrice symétrique et inversible, mais n’est pas égale à la matrice d’identité.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Erreurs non-sphériques - Matrice \( \Omega \)}
+\begin{itemize}
+    \item Cette formulation permet l’hétéroscédasticité des erreurs de plusieurs formes :
+    \begin{itemize}
+        \item Hétéroscédasticité groupée de différentes formes.
+        \item Corrélation sériale des erreurs.
+        \item Variance qui varie en fonction de variables exogènes.
+        \item Effets arch.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Erreurs non-sphériques - Implication si \( \Omega \neq I \)}
+\begin{itemize}
+    \item Vérifions si l’estimateur des OLS reste sans biais et convergent lorsque la variance du terme d’erreur n’est plus homoscédastique.
+    \item Biais de l’estimateur OLS si l’hypothèse que \( \Omega = I \) n’est pas respectée.
+    \item L’estimateur OLS est donné par :
+    \[
+    \hat{\beta}_{OLS} = (X^T X)^{-1} X^T Y
+    \]
+    \item En substituant \( Y = X \beta + u \), cela donne :
+    \[
+    \hat{\beta}_{OLS} = (X^T X)^{-1} X^T \left( X \beta + u \right)
+    \]
+    \item Ce qui se simplifie à :
+    \[
+    \hat{\beta}_{OLS} = \beta + (X^T X)^{-1} X^T u
+    \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Erreurs non-sphériques - Implication si \( \Omega \neq I \) (suite)}
+\begin{itemize}
+    \item \( E(\hat{\beta}_{OLS}) = \beta + (X^T X)^{-1} X^T E(u) \)
+    \item Sachant que \( E(u) = 0 \), cela donne :
+    \[
+    E(\hat{\beta}_{OLS}) = \beta
+    \]
+    \item On voit que comme la matrice de variance-covariance des erreurs n’intervient pas dans le calcul de l’espérance de l’estimateur OLS.
+    \item L’estimateur des OLS est toujours sans biais.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Erreurs non-sphériques - Implication si \( \Omega \neq I \) (suite)}
+\begin{itemize}
+    \item \textbf{Variance de l’estimateur OLS.}
+    \[
+    V(\hat{\beta}) = E\left[ (\hat{\beta} - \beta)(\hat{\beta} - \beta)^T \right]
+    = E\left[ (X^T X)^{-1} X^T \omega \omega^T X (X^T X)^{-1} \right]
+    \]
+    \[
+    = (X^T X)^{-1} X^T E(\omega \omega^T) X (X^T X)^{-1}
+    = \sigma^2 (X^T X)^{-1} \Omega (X^T X)^{-1}
+    \]
+    \item Cet estimateur est problématique, car on ne peut pas le comparer à l’estimateur des OLS.
+    \begin{itemize}
+        \item On ne peut pas dire s’il est plus grand, plus petit.
+    \end{itemize}
+    \item On ne peut donc pas appliquer la preuve du théorème de Gauss-Markov ni regarder la borne de Cramer-Rao.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Les Moindres Carrés Généralisés}
+\begin{itemize}
+    \item Transformation du modèle contenant des erreurs sphériques, pour le rendre optimal et compatible avec les hypothèses des MCO.
+    \item Pour tout \( \Omega \) inversible, il existe une matrice \( P \) telle que :
+    \[
+    P^T P = P P^T = \Omega
+    \]
+    \item Si on inverse les deux côtés de la dernière équation :
+    \[
+    \Omega^{-1} = [P P^T]^{-1} = [P^{-1}]^T P^{-1}
+    \]
+    où \( P \) n’est pas aléatoire.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Les Moindres Carrés Généralisés - Modèle transformé}
+\begin{itemize}
+    \item Modèle transformé :
+    \[
+    P^{-1} Y = P^{-1} X \beta + P^{-1} u
+    \]
+    \item \textbf{Variance des erreurs :}
+    \[
+    E\left[ (P^{-1} u) (P^{-1} u)^T \right] = E\left[ P^{-1} u u^T P^{-1} \right]
+    \]
+    \[
+    = P^{-1} E(u u^T) P^{-1}
+    = P^{-1} \sigma^2 \Omega P^{-1}
+    = \sigma^2 P^{-1} \Omega P^{-1}
+    = \sigma^2 I
+    \]
+    \item Donc, l’estimateur OLS appliqué au modèle transformé sera optimal !
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Les Moindres Carrés Généralisés - Estimateur GLS}
+\begin{itemize}
+    \item Modèle transformé :
+    \item Estimateur GLS :
+    \[
+    \hat{\beta}_{GLS} = \left( (P^{-1} X) (P^{-1} X)^T \right)^{-1} (P^{-1} X)^T (P^{-1} Y)
+    \]
+    \[
+    = \left[ X^T P^{-1} P^{-1} \right]^{-1} X^T P^{-1} P^{-1} Y
+    \]
+    \[
+    = \left[ X^T \Omega^{-1} X \right]^{-1} X^T \Omega^{-1} Y
+    \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Les Moindres Carrés Généralisés - Estimateur FGLS}
+\begin{itemize}
+    \item Si \( \Omega \) (ou \( P \)) n'est pas connu, on le remplace par un estimé convergent \( \hat{\Omega}(\hat{P}) \).
+    \item Estimateur FGLS :
+    \[
+    \hat{\beta}_{FGLS} = \left[ (\hat{\beta}^{-1} X) (P^{-1} X)^T (\hat{\beta}^{-1} X) (P^{-1} Y) \right]
+    \]
+    \[
+    = \left[ X^T \hat{\Omega}^{-1} X \right]^{-1} X^T \hat{\Omega}^{-1} Y
+    \]
+    \[
+    = \text{PLIM} \hat{\beta}_{FGLS} = \beta
+    \]
+    \item Ce résultat demande que \( \hat{\Omega} \) soit convergent.
+    \item Cet estimateur n'est pas optimal au sens de Cramer-Rao, il est optimal asymptotiquement.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Les Moindres Carrés Généralisés - Estimateur convergent}
+\begin{itemize}
+    \item Un estimateur est convergent (consistent en anglais) si lorsque la taille de l’échantillon augmente vers l’infini, l’estimateur se concentre (converge) sur la vraie valeur du paramètre.
+    \item Les conditions suffisantes pour la convergence en probabilité sont :
+    \[
+    \lim_{T \to \infty} E(\hat{\beta}_T) = \beta
+    \]
+    \[
+    \lim_{T \to \infty} \text{Var}(\hat{\beta}_T) = 0
+    \]
+    \item La convergence est une propriété qui fait intervenir la loi des grands nombres et le théorème de limite centrale qui sont des résultats statistiques asymptotiques.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Les Moindres Carrés Généralisés - Espérance estimateur GLS}
+\begin{itemize}
+    \item Si \( \Omega \) est connu et non estimé.
+    \item Estimateur GLS :
+    \[
+    \hat{\beta}_{GLS} = \left[ X^T \Omega^{-1} X \right]^{-1} X^T \Omega^{-1} Y
+    \]
+    \[
+    = \left[ X^T \Omega^{-1} X \right]^{-1} X^T \Omega^{-1} \left( X \beta + u \right)
+    \]
+    \[
+    = \left[ X^T \Omega^{-1} X \right]^{-1} X^T \Omega^{-1} X \beta + \left[ X^T \Omega^{-1} X \right]^{-1} X^T \Omega^{-1} u
+    \]
+    \[
+    = \beta + \left[ X^T \Omega^{-1} X \right]^{-1} X^T \Omega^{-1} u
+    \]
+    \item En espérance :
+    \[
+    E(\hat{\beta}_{GLS}) = \beta + \left[ X^T \Omega^{-1} X \right]^{-1} X^T \Omega^{-1} E(u)
+    \]
+    \[
+    = \beta
+    \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Les Moindres Carrés Généralisés - Variance estimateur GLS}
+\begin{itemize}
+    \item Si \( \Omega \) est connu et non estimé.
+    \item Variance de l'estimateur GLS :
+    \[
+    V(\hat{\beta}_{GLS}) = E\left[ (\hat{\beta}_{GLS} - \beta)(\hat{\beta}_{GLS} - \beta)^T \right]
+    \]
+    \[
+    = E\left[ (X^T \Omega^{-1} X)^{-1} X^T \Omega^{-1} u u^T \Omega^{-1} X (X^T \Omega^{-1} X)^{-1} \right]
+    \]
+    \[
+    = (X^T \Omega^{-1} X)^{-1} X^T \Omega^{-1} E(u u^T) \Omega^{-1} X (X^T \Omega^{-1} X)^{-1}
+    \]
+    \[
+    = \sigma^2 (X^T \Omega^{-1} X)^{-1} \Omega \Omega^{-1} X (X^T \Omega^{-1} X)^{-1}
+    \]
+    \[
+    = \sigma^2 (X^T \Omega^{-1} X)^{-1}
+    \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Les Moindres Carrés Généralisés - Variances des différents estimateurs}
+\begin{itemize}
+    \item La variance des OLS sur le modèle standard sans hétéroscédasticité :
+    \[
+    V(\hat{\beta}) = \sigma^2 (X^T X)^{-1}
+    \]
+    \item La variance des OLS avec hétéroscédasticité sur le modèle non transformé :
+    \[
+    V(\hat{\beta}_{OLS})_{HE} = \sigma^2 (X^T X)^{-1} X^T \Omega X (X^T X)^{-1}
+    \]
+    \item La variance du modèle GLS transformé par la matrice \( P \) :
+    \[
+    V(\hat{\beta}_{GLS}) = \sigma^2 (X^T \Omega^{-1} X)^{-1}
+    \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Les Moindres Carrés Généralisés - Variances des différents estimateurs (suite)}
+\begin{itemize}
+    \item Les éléments sur la diagonale de \( V(\hat{\beta}_{OLS})_{HE} \) sont plus grands que ceux de \( V(\hat{\beta}_{GLS}) \).
+    \item Ce n’est pas le même modèle qui est estimé, de même que les coefficients associés sont différents.
+    \item Il n’est donc pas approprié de comparer les deux séries de résultats entre eux.
+    \item Lorsqu'il y a hétéroscédasticité, la variance des OLS standards \( V(\hat{\beta}) = \sigma^2 (X^T X)^{-1} \) est \textbf{fausse} et elle ne peut pas être comparée aux autres.
+    \item On ne sait pas si elle est plus petite ou plus grande, elle est simplement fausse.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Les Moindres Carrés Généralisés - Si on connaît \( \Omega \) ou non}
+\begin{itemize}
+    \item Si on connaît \( \Omega \) :
+    \begin{itemize}
+        \item Il est préférable de prendre l'estimateur GLS.
+    \end{itemize}
+    \item Si on ne connaît pas \( \Omega \) :
+    \begin{itemize}
+        \item Il est préférable de prendre l'estimateur GLS et d’estimer \( \Omega \).
+        \item Le résultat de l’estimateur FGLS tient, mais en limite seulement.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\end{document}

@@ -1,0 +1,641 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+% Thème et couleurs
+\usetheme{default} % Un thème plus moderne et professionnel
+\usecolortheme{seagull} % Palette de couleurs harmonieuse
+
+% Police
+\usepackage{lmodern} % Police améliorée
+
+
+\title[S02 Régression et MCO]{Maximum de Vraissemblance\\ (Séance 2)}
+\subtitle{GSF-6053: Économétrie Financière}
+\author[SP. Boucher]{Simon-Pierre Boucher\inst{1}}
+\institute[Université Laval]
+{
+  \inst{1}%
+  Département de finance, assurance et immobilier\\
+  Faculté des sciences de l'administration\\
+  Université Laval}
+\date[Hiver 2025]{21 Janvier 2025}
+% Configuration du pied de page avec logo en bas à droite
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.7\paperwidth,ht=2ex,dp=1ex,left]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.3\paperwidth,ht=2ex,dp=1ex,right]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{0.5em}
+      \insertframenumber{} / \inserttotalframenumber\hspace*{0.5em}
+      \raisebox{0.2cm}{\includegraphics[height=0.6cm]{logo_universite_laval.png}} % Ajustement du logo
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamertemplate{navigation symbols}{} % Supprime les symboles de navigation par défaut
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame}{Références}
+\textbf{Obligatoires:}
+\begin{itemize}
+\item \textbf{Woolridge:} chapitres 2 à 7
+\end{itemize}
+\vspace{0.5cm}
+\textbf{Complémentaires:}
+\begin{itemize}
+\item \textbf{Gujarati et Porter:} chapitres 1 à 9.
+\item \textbf{Greene:} chapitres 2, 3, 4, 5, 9, 14, 20, appendices C et D
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Plan de la séance}
+  \tableofcontents
+\end{frame}
+
+\section{Maximum de Vraissemblance}
+
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Maximum de Vraissemblance}
+\begin{itemize}
+\item Le maximum de vraisemblance est une méthode générale pour estimer les paramàtres d’un modèle statistique.
+\item Nous aurons une série d’observations d’une variable aléatoire y et un modèle statistique potentiel pour cette variable.
+\begin{itemize}
+\item Ce modèle peut inclure la dépendance de y sur d’autres variables prédictrices.
+\item Ainsi qu’une distribution statistique pour la portion non-expliquée de la variation de y.
+\end{itemize}
+\item Selon le maximum de vraisemblance, les meilleurs estimés des paramètres d’un modèle sont ceux qui maximisent la probabilité des valeurs observées de la variable
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Maximum de Vraissemblance}
+\begin{itemize}
+\item Fonction de densité pour une variable aléatoire $Y$ conditionné sur un ensemble de paramètres $\theta$
+\begin{align*}
+f(Y \mid \theta)
+\end{align*}
+\item La fonction de densité jointe de $n$ observations est simplement le produit des densités individuels 
+
+\begin{align*}
+f(y_1,y_2,...,y_n \mid \theta)=\prod_{i=1}^{n} f(y_i \mid \theta)=L(\theta \mid Y)
+\end{align*}
+\begin{itemize}
+\item Ensemble de paramètres $\theta$ est inconnu.
+\item Nous voulons les valeurs de $Y$ provenant de l'échantillon.
+\end{itemize}
+\item Donner à $\theta$ la valeur qui maximise la probabilité d'obtenir un échantillon identique à celui qu'on dispose.
+\end{itemize}
+\end{frame}
+
+\section{MLE: Modèle de régression linéaire}
+
+\frame{\tableofcontents[current]}
+
+
+\begin{frame}{MLE: Modèle de régression linéaire}
+\begin{itemize}
+\item Hypothèse distributionnelle sur les $u_t$
+\begin{align*}
+u_t \sim \hspace{0.1cm} iid \hspace{0.1cm} N(0,\sigma^2)
+\end{align*}
+\item Loi conjointe des $u_1, u_2, ..., u_T$
+\begin{align*}
+f(u_1,u_2,...,u_T)=\prod_{t=1}^{T}f(u_t)=\left(\frac{1}{\sqrt{2 \pi \sigma^2}}\right)^T e^{-\frac{\sum_{t=1}^T(u_t)^2}{2 \sigma^2}}
+\end{align*}
+\item Interessés à la loi coinjointes des $y_t$
+\item Effectué un changement de variable: 
+\begin{align*}
+u_t=Y_t-X_t^{'} \beta
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{MLE: Modèle de régression linéaire}
+\begin{itemize}
+\item Loi conjointe des $Y_t$ (Vraissemblance)
+\begin{align*}
+f(Y_1,Y_2,...,Y_T)=&\prod_{t=1}^{T}g(Y_t)=\left(\frac{1}{\sqrt{2 \pi \sigma^2}}\right)^T e^{-\frac{\sum_{t=1}^T(Y_t-X_t^{'} \beta)^2}{2 \sigma^2}} \\ & = (2 \pi \sigma^2)^{-T/2} e^{-\frac{(Y-X \beta)'(Y-X \beta)}{2\sigma^2}}
+\end{align*}
+\item On veut enseuite obtenir la Log-Vraissemblance en prenant le logarithme de la fonction de vraissemblance.
+\begin{align*}
+L= -\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\sigma^2)-\frac{1}{2} \times \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2}
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{MLE: Modèle de régression linéaire}
+\begin{itemize}
+\item Maximiser la log-vraissemblance en fonction de $\beta$ et $\sigma^2$
+\item \textbf{En fonction de $\beta$}
+\begin{align*}
+\frac{\partial L}{\partial \beta} = \frac{1}{\sigma^2} \times \frac{\partial (Y'Y =2Y'X\beta +\beta'X'X \beta)}{\partial \beta}=0
+\end{align*}
+\textbf{Condition de première ordre:}
+\begin{align*}
+-2X'Y+2X'X\beta=0
+\end{align*}
+\begin{align*}
+-X'Y+X'X\beta=0
+\end{align*}
+\begin{align*}
+X'X\beta = X'Y 
+\end{align*}
+\textbf{Estimateur $\beta$ par MLE:}
+\begin{align*}
+\hat{\beta}= (X'X)^{-1}X'Y
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{MLE: Modèle de régression linéaire}
+\begin{itemize}
+\item \textbf{En fonction de $\sigma^2$}
+\begin{align*}
+\frac{\partial L}{\partial \sigma^2}=\frac{\partial  \left[-\frac{T}{2} \log (\sigma^2)-\frac{1}{2} \times \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2} \right]}{\partial \sigma^2}=0
+\end{align*}
+\item Nous allons  dériver par rapport à $\sigma^2$ en deux parties
+\begin{itemize}
+\item 1er terme:
+\begin{align*}
+\frac{\partial \left[-\frac{T}{2} \log (\sigma^2) \right]}{\partial \sigma^2}=-\frac{T}{2} \times \frac{1}{\sigma^2}
+\end{align*}
+\end{itemize}
+\begin{itemize}
+\item 2e terme:
+\begin{align*}
+\frac{\partial \left[-\frac{1}{2} \times \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2} \right]}{\partial \sigma^2}=\frac{\partial \left[-\frac{1}{2} \times (\sigma^2)^{-1}(Y-X \beta)'(Y-X \beta) \right]}{\partial \sigma^2}
+\end{align*}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{MLE: Modèle de régression linéaire}
+\begin{itemize}
+\item \textbf{En fonction de $\sigma^2$}
+\begin{itemize}
+\item Suite pour le 2e terme:
+\end{itemize}
+\begin{align*}
+\frac{\partial \left[-\frac{1}{2} \times (\sigma^2)^{-1}(Y-X \beta)'(Y-X \beta) \right]}{\partial \sigma^2}\\ = \frac{T}{2} \times (\sigma^2)^{-2}(Y-X \beta)'(Y-X \beta) \\ =\frac{1}{2} \times \sigma^{-4}(Y-X\beta)'(Y-X \beta) \\ = \frac{T}{2} \times \frac{(Y-X\beta)'(Y-X \beta)}{\sigma^4}
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{MLE: Modèle de régression linéaire}
+\begin{itemize}
+\item \textbf{En fonction de $\sigma^2$}
+\begin{itemize}
+\item On additionne les deux termes et nous avons notre condition de première ordre
+\end{itemize}
+\begin{align*}
+\frac{\partial L}{\partial \sigma^2}= -\frac{T}{2} \times \frac{1}{\sigma^2}+ \frac{1}{2} \times \frac{(Y-X\beta)'(Y-X \beta)}{\sigma^4}
+\end{align*}
+\item On veut maintenant isoler $\sigma^2$ pour obtenir l'estimateur $\hat{\sigma}^2$
+\begin{align*}
+\frac{1}{2} \times \frac{(Y-X\beta)'(Y-X \beta)}{\sigma^4}=\frac{T}{2} \times \frac{1}{\sigma^2}
+\end{align*}
+\item On peut multiplier par $2 \sigma^2$ de chaque coté pour simplifier
+\begin{align*}
+\frac{(Y-X\beta)'(Y-X \beta)}{\sigma^2}=T
+\end{align*}
+\textbf{Estimateur $\hat{\sigma}^2$ pour la méthode des MLE}
+\begin{align*}
+\hat{\sigma}^2=\frac{(Y-X \beta)'(Y-X \beta)}{T}
+\end{align*}
+\end{itemize}
+\end{frame}
+
+
+\section{Propriétés Estimateur MLE ET MCO}
+
+\frame{\tableofcontents[current]}
+
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+\begin{itemize}
+\item Pour $\hat{\beta}$ des MCO et MLE, leurs résultats coincident 
+\end{itemize}
+\begin{block}{Estimateur \textbf{BLUE}}
+\begin{itemize}
+\item Best linear unbiased estimator 
+\begin{itemize}
+\item Estimateur sans biais 
+\item Estimateur ayant une variance minimal 
+\end{itemize}
+\item L'estimateur des moindres carrés ordinaires est BLUE 
+\item L'estimateur $\hat{\sigma}^2$ du Maximum de vraissemblance est biaisé vers le bas 
+\item On peut trouver une alternative sans biais 
+\begin{align*}
+\hat{S}^2=\frac{(Y-X \hat{\beta})'(Y-X \hat{\beta})}{T-K}
+\end{align*}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+\begin{block}{Estimateur \textbf{BLUE}}
+\begin{itemize}
+\item \textbf{Sans biais} : Espérance de l'estimateur égale à la vraie valeur du paramètre
+\begin{align*}
+E(\hat{\theta})=\theta
+\end{align*}
+\item \textbf{Efficace:} Si l'estimateur atteint la borne de Crameur-Rao (autrement dit, l'inverse de la matrice d'information de fisher)
+\item On veut un estimateur ayant la variance la plus petite possible
+\begin{itemize}
+\item Cela donne une meilleur pécision
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Inverse de la matrice d'information}
+\begin{itemize}
+\item Borne de Cramer-Rao : Pour tout estimateur régulier et sans biais, sa variance
+est bornée par l’inverse de la matrice d’information.
+\item La matrice d’information est quant à elle une façon de mesurer la quantité
+d’information sur les paramètres dans $\theta$ contenue dans $X$.
+\item Une définition équivalente serait que la variance d’un estimateur sans biais
+sera toujours au moins aussi grande que l’inverse de la matrice d’information :
+\end{itemize}
+
+\begin{align*}
+[I(\theta)]^{-1} &=\left( -E \left[\frac{\partial^2 \log L(\theta)}{\partial \theta^2} \right] \right)^{-1} \\ &=\left( E \left[ \left(\frac{\partial \log L(\theta)}{\partial \theta}\right)^2 \right] \right)^{-1}
+\end{align*}
+
+\\
+\end{frame}
+
+\begin{frame}{Matrice d'information et Hessienne}
+
+
+\begin{itemize}
+\item La matrice d'information est simplement une matrice hessienne d'une d'une fonction.
+\item Il s'agit essentiellement d'une matrice de dérivé seconde: 
+\item On suppose une fonction $f(x_1, x_2)$ et on représente la hessienne de cette fonction par $H_{i,j}(f)$
+\item On doit représenter $H_{i,j}(f)$ comme étant l'ensemble des dérivés secondes partiels possible.
+\begin{align*}
+H_{i,j}=\frac{\partial^2 f}{\partial x_i \partial x_j}
+\end{align*}
+\item Il y aura donc 4 dérivés secondes partiels possibles
+\begin{itemize}
+\item $i=1$ et $j=1$, alors $\partial x_1^2$
+\item $i=1$ et $j=2$, alors $\partial x_1 \partial x_2$
+\item $i=2$ et $j=1$, alors $\partial x_2 \partial x_1$
+\item $i=2$ et $j=2$, alors $\partial x_2^2$
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Matrice d'information}
+
+\textbf{Dans le cas du modèle linéaire estimé par MLE}
+\begin{itemize}
+\item On aura 4 dérivés seconde étant donnée que nous avons deux paramètres à estimer, soit $\beta$ et $\sigma^2$.
+\begin{itemize}
+\item \textbf{En haut à gauche:} $\partial \beta \partial \beta$
+\item \textbf{En haut à droite:} $\partial \beta \partial \sigma^2$
+\item \textbf{En bas à gauche:} $\partial \sigma^2 \partial \beta$
+\item \textbf{En bas à droite:} $(\partial \sigma^2)^2$
+\end{itemize}
+
+\begin{align*}
+I(\beta, \sigma^2) = -E\begin{bmatrix}
+\left( \frac{\partial^2 L}{\partial \beta \partial \beta'}\right) & \left( \frac{\partial^2 L}{\partial \beta \partial \sigma^2}\right) \\
+\left( \frac{\partial^2 L}{\partial \sigma^2 \partial \beta'}\right) & \left( \frac{\partial^2 L}{(\partial \sigma^2)^2}\right)
+\end{bmatrix}
+\end{align*}
+\item Nous allons maintenant résoudre les 4 dérivés secondes partiels possibles:
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+\begin{block}{En haut à gauche}
+\begin{align*}
+\frac{\partial^2 L}{\partial \beta \partial \beta'} & =\frac{\partial^2 \left[ -\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\sigma^2)-\frac{1}{2} \times \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2} \right]}{\partial \beta \partial \beta'}  \\ & = \frac{\partial \left[-\frac{1}{2 \sigma^2} \times (-2X'Y+2X'X \hat{\beta}) \right]}{\partial \beta} \\ & = -\frac{1}{\sigma^2}(X'X)
+\end{align*}
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+\begin{block}{En haut à droite}
+\begin{align*}
+\frac{\partial^2 L}{\partial \beta \partial \sigma^2} & =\frac{\partial^2 \left[ -\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\sigma^2)-\frac{1}{2} \times \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2} \right]}{\partial \beta \partial \sigma^2}  \\ & = \frac{\partial \left[-\frac{1}{2 \sigma^2} \times (-2X'Y+2X'X \hat{\beta}) \right]}{\partial \sigma^2} \\ & = \frac{1}{2 \sigma^4} \times (-2X'Y + 2X'X\hat{\beta}) \\ & = \frac{1}{\sigma^4} \times (X'Y -X'X \hat{\beta}) \\ &= -\frac{1}{\sigma^4} \times (X'[Y-X \hat{\beta}]) \\ & = -\frac{1}{\sigma^4}(X'u)
+\end{align*}
+Sachant $Y-X \hat{\beta}=u$
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+\begin{block}{En bas à gauche}
+\begin{align*}
+\frac{\partial^2 L}{\partial \sigma^2 \partial \beta'} & = \left( \frac{\partial^2 L}{\partial \beta \partial \sigma^2}\right)^{'} \\ & = -\frac{1}{\sigma^4}(X'u)' \\ & = -\frac{1}{\sigma^4}(u'X)
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+\begin{block}{En bas à droite}
+\begin{align*}
+\frac{\partial^2 L}{(\partial \sigma^2)^2} & = \frac{\partial^2 \left[ -\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\sigma^2)-\frac{1}{2} \times \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2} \right]}{(\partial \sigma^2)^2} \\ & = \frac{\partial \left[-\frac{-T}{2 \sigma^2}+\frac{(Y-X \beta)'(Y-X \beta)}{2\sigma^4} \right]}{\partial \sigma^2} \\ & = \frac{T}{2 \sigma^4} - \frac{(Y-X\beta)'(Y-X \beta)}{\sigma^6}
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+\begin{itemize}
+\item Espérance mathématique de chacune des dérivés
+\end{itemize}
+\begin{block}{En haut à gauche}
+\begin{align*}
+E \left(-\frac{\partial^2 L}{\partial \beta \partial \beta'} \right) &= E \left(- \left[-\frac{1}{\sigma^2} (X'X)  \right]\right) \\ & = \frac{1}{\sigma^2}(X'X)
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+
+\begin{block}{En haut à droite}
+\begin{align*}
+E \left(-\frac{\partial^2 L}{\partial \beta \partial \sigma^2} \right) &= E \left(- \left[-\frac{1}{\sigma^4} (X'Y-X'X \beta)  \right]\right) \\ & = \frac{1}{\sigma^4}(X'E(Y)-X'X \beta) \\ & = \frac{1}{\sigma^4} (X'X \beta - X'X \beta) \\ & = 0
+\end{align*}
+Sachant $E(Y)=X \beta$
+\end{block}
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+
+\begin{block}{En bas à gauche}
+\begin{align*}
+E \left(-\frac{\partial^2 L}{\partial \sigmap^2 \partial \beta'} \right) = 0
+\end{align*}
+\end{block}
+\begin{block}{En bas à droite}
+\begin{align*}
+E \left(-\frac{\partial^2 L}{(\partial \sigmap^2)^2} \right) & =E \left(- \left[\frac{T}{2 \sigma^4}-\frac{(Y-X \beta)'(Y-X \beta)}{\sigma^6} \right] \right) \\ & = -\frac{T}{2 \sigma^4}+\frac{E[(Y-X \beta)'(Y-X \beta)]}{\sigma^6}
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+\begin{block}{En bas à droite}
+\textbf{Utilisons la trace:}
+\begin{align*}
+E[(Y-X \beta)'(Y-X \beta)] & = E(u'u) \\ & = E(Trace(u'u)) \\ & =  E(Trace(uu')) \\ & = Trace(E(uu')) \\ & = Trace(\sigma^2 I_T) \\ & = T\sigma^2
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+\begin{block}{En bas à droite}
+\textbf{Donc:}
+\begin{align*}
+E \left(-\frac{\partial^2 L}{(\partial \sigmap^2)^2} \right) & = -\frac{T}{2 \sigma^4}+\frac{T \sigma^2}{\sigma^6} \\ & = -\frac{T}{2 \sigma^4}+\frac{T}{\sigma^4} \\ & =  -\frac{T}{2 \sigma^4}+\frac{2T}{2\sigma^4} \\ & = \frac{T}{2\sigma^4}
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO}
+\begin{block}{Matrice d'information}
+\begin{align*}
+I(\beta, \sigma^2)=\begin{bmatrix}
+\frac{1}{\sigma^2} (X'X) & 0 \\
+0 & \frac{T}{2\sigma^4}
+\end{bmatrix}
+\end{align*}
+\end{block}
+
+\begin{block}{Inverse matrice d'information}
+\begin{align*}
+I^{-1}(\beta, \sigma^2)=\begin{bmatrix}
+ \sigma^2(X'X) & 0 \\
+0 & \frac{2\sigma^4}{T}
+\end{bmatrix}
+\end{align*}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO - Espérance}
+
+On sait déja que l'estimateur $\hat{\beta}$ possède la solution suivante:
+\begin{align*}
+\hat{\beta} = (X'X)^{-1}X'Y
+\end{align*}
+Sachant $Y= X\beta +u$
+\begin{align*}
+\hat{\beta} = (X'X)^{-1}X'[X\beta +u]
+\end{align*}
+\begin{align*}
+\hat{\beta} = (X'X)^{-1}X'X\beta +(X'X)^{-1}X'u
+\end{align*}
+Sachant également $(X'X)^{-1}X'X = I$
+\begin{align*}
+\hat{\beta} = \beta +(X'X)^{-1}X'u
+\end{align*}
+
+\end{frame}
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO - Espérance}
+
+On applique l'espérance de chaque coté de l'équation
+\begin{align*}
+E(\hat{\beta}) & =E(\beta +(X'X)^{-1}X'u) \\ & = \beta +(X'X)^{-1}X'E(u)
+\end{align*}
+Sachant $E(u)=0$
+\begin{align*}
+E(\hat{\beta})=\beta 
+\end{align*}
+\textbf{On peut donc maintenant affirmer que $\hat{\beta}}$ est un estimateur sans biais de $\beta$
+
+\end{frame}
+
+
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO - Variance}
+
+On peut exprimer la variance de $\hat{\beta}$ comme suit:
+\begin{align*}
+Var(\hat{\beta})=E[(\hat{\beta}-\beta)(\hat{\beta}-\beta)']
+\end{align*}
+Sachant l'éqation que nous avons déja obtenus dans le calcule de l'espérance:
+\begin{align*}
+\hat{\beta}=\beta +(X'X)^{-1}X'u
+\end{align*}
+Alors il nous est possible d'exprimer la déviation de l'estimateur $\hat{\beta}$ par rapport à sa vrai valeur $\beta$.
+\begin{align*}
+\hat{\beta}-\beta = (X'X)^{-1}X'u
+\end{align*}
+
+\end{frame}
+
+
+\begin{frame}{Propriétés Estimateur MLE ET MCO - Variance}
+
+On peut donc incorporer l'équation de $(\hat{\beta}-\beta)$ dans l'équation de la variance de $\hat{\beta}$
+\begin{align*}
+Var(\hat{\beta})&=E[((X'X)^{-1}X'u)((X'X)^{-1}X'u)'] \\ & = E[(X'X)^{-1}X'uu'X(X'X)^{-1}] \\ & = (X'X)^{-1}X'E(uu')X(X'X)^{-1}
+\end{align*}
+Sachant $E(uu')=\sigma^2I$
+\begin{align*}
+Var(\hat{\beta})=(X'X)^{-1}X'\sigma^2IX(X'X)^{-1}
+\end{align*}
+Sachant $(X'X)^{-1}X'X)=I$
+\begin{align*}
+Var(\hat{\beta})=\sigma^2(X'X)^{-1}
+\end{align*}
+
+\textbf{On voit donc que la variance de $\hat{\beta}$ atteint la borne de Crameur-Rao ou l'inverse de la matrice d'information}
+\end{frame}
+
+\section{Propriétés de $\hat{\sigma}^2$}
+
+\frame{\tableofcontents[current]}
+
+
+\begin{frame}{Propriétés de $\hat{\sigma}^2$}
+On sait que:
+\begin{align*}
+\frac{(Y-X \hat{\beta})'(Y-X \hat{\beta})}{\sigma^2} \sim X^2(T-K)
+\end{align*}
+\begin{itemize}
+\item Sachant $\hat{u}_t=Y-X \hat{\beta}$
+\begin{itemize}
+\item $\hat{u}_t$ sont normales par hypothèses
+\item $\hat{u}_t^{'}\hat{u}_t$ suit une loi chi carré
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Propriétés de $\hat{\sigma}^2$}
+\textbf{On peut montrer que l'espérance de ce terme est la suivante:}
+\begin{align*}
+E \left[ \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2}\right]=(T-K)
+\end{align*}
+\textbf{On peut montrer que la variance de ce terme est la suivante:}
+\begin{align*}
+V \left[ \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2}\right]=2(T-K)
+\end{align*}
+\end{frame}
+
+\begin{frame}{Propriétés de $\hat{\sigma}^2$}
+\textbf{On sait que l'estimateur $\hat{\sigma}^2$ est le suivant:}
+\begin{align*}
+\hat{\sigma}^2=\frac{(Y-X \beta)'(Y-X \beta)}{T}
+\end{align*}
+\textbf{Espérance de $\hat{\sigma}^2$}
+\begin{align*}
+E(\hat{\sigma}^2)=E \left( \frac{(Y-X \beta)'(Y-X \beta)}{T}\right)
+\end{align*}
+\end{frame}
+
+\begin{frame}{Propriétés de $\hat{\sigma}^2$}
+\begin{itemize}
+\item On peut multiplier le numérateur et le dénominateur par $\sigma^2$ afin d'écrire l'équation de l'espérance comme suit:
+\begin{align*}
+E(\hat{\sigma}^2)=E \left( \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2} \times \frac{\sigma^2}{T} \right)
+\end{align*}
+\item Sachant $E \left[ \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2}\right]=(T-K)$ on peut formuler à l'équation de $\hat{\sigma}^2$ comme suit:
+\begin{align*}
+\frac{\sigma^2}{T}(T-K)
+\end{align*}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Propriétés de $\hat{\sigma}^2$}
+\begin{itemize}
+\item On voit que cette estimateur est biaisé et la borne de Crameur-Rao ne peu s'appliquer dans le ce cas.
+\item Cependant, si $T$ devient suffisament grand, alors:
+\begin{align*}
+T-K \approx T
+\end{align*}
+\item On voit clairement que le biais s'annule 
+\begin{align*}
+E(\hat{\sigma}^2)=\frac{\sigma^2}{T}(T)=\sigma^2
+\end{align*}
+\end{itemize}
+\end{frame}
+
+
+\section{Estimateur de la variance sans biais}
+
+\frame{\tableofcontents[current]}
+
+
+\begin{frame}{Estimateur de la variance sans biais}
+\begin{itemize}
+\item L'estimateur de la variance sans biais est représenté par $\hat{S}^2$
+\begin{align*}
+\hat{S}^2=\frac{(Y-X \hat{\beta})'(Y-X \hat{\beta})}{T-K}
+\end{align*}
+\textbf{Espérance de $\hat{S}^2$}
+\begin{align*}
+E(\hat{S}^2)=E \left[ \frac{(Y-X \hat{\beta})'(Y-X \hat{\beta})}{T-K}\right]
+\end{align*}
+\item On peut multiplier le numérateur et le dénominateur par $\sigma^2$ afin d'écrire l'équation de l'espérance de $\hat{S}^2$ comme suit:
+\begin{align*}
+E(\hat{S}^2)=E \left[ \frac{(Y-X \hat{\beta})'(Y-X \hat{\beta})}{\sigma^2} \times \frac{\sigma^2}{T-K}\right]
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Estimateur de la variance sans biais}
+\begin{itemize}
+\item Sachant $E \left[ \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2}\right]=(T-K)$ on peut formuler à l'équation de l'espérance de $\hat{S}^2$ comme suit:
+\begin{align*}
+E(\hat{S}^2) & =(T-K) \times \frac{\sigma^2}{T-K} \\ & = \sigma^2
+\end{align*}
+\item On voit donc que l'estimateur de la variance $\hat{S}^2$ est sans biais étant donnée que sont espérance égale la vrai valeur de la variance $\sigma^2$
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Estimateur de la variance sans biais}
+
+\textbf{Variance de $\hat{S}^2$}
+\begin{align*}
+V(\hat{S}^2)=V \left[ \frac{(Y-X \hat{\beta})'(Y-X \hat{\beta})}{T-K}\right]
+\end{align*}
+\begin{itemize}
+\item On peut multiplier le numérateur et le dénominateur par $\sigma^2$ afin d'écrire l'équation de la variance de $\hat{S}^2$ comme suit:
+\begin{align*}
+V(\hat{S}^2)=V \left[ \frac{(Y-X \hat{\beta})'(Y-X \hat{\beta})}{\sigma^2} \times \frac{\sigma^2}{T-K}\right]
+\end{align*}
+\item On peut sortir $\frac{\sigma^2}{T-K}$ de l'opérateur variance en élevant ce terme à la puissance 2.
+\begin{align*}
+V(\hat{S}^2)= \frac{\sigma^4}{(T-K)^2} V\left[ \frac{(Y-X \hat{\beta})'(Y-X \hat{\beta})}{\sigma^2} \right]
+\end{align*}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Estimateur de la variance sans biais}
+
+\textbf{Variance de $\hat{S}^2$}
+\begin{itemize}
+\item Sachant $V \left[ \frac{(Y-X \beta)'(Y-X \beta)}{\sigma^2}\right]=2(T-K)$, on peut écrire la variance de $\hat{S}^2$ comme suit:
+\begin{align*}
+V(\hat{S}^2) & = \frac{\sigma^4}{(T-K)^2} \times [2(T-K)] \\ & = \frac{2 \sigma^4}{T-K}
+\end{align*}
+\item On voit clairement que $V(\hat{S}^2)$ n'atteint pas la borne de Cramer-Rao étant donnée que cette variance est plus grande que celle donnée par la borne.
+\begin{align*}
+\frac{2 \sigma^4}{T-K} > \frac{2 \sigma^4}{T}
+\end{align*}
+\end{itemize}
+\end{frame}
+\end{document}

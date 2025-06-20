@@ -1,0 +1,281 @@
+\documentclass[14pt]{extarticle} % Utilisation de extarticle pour supporter 14pt
+
+% ------------------------------------------------------------------------
+% Packages indispensables et recommandés
+% ------------------------------------------------------------------------
+\usepackage[utf8]{inputenc}     % Encodage des caractères
+\usepackage[T1]{fontenc}        % Encodage de la police
+\usepackage[french]{babel}      % Support de la langue française
+\usepackage{amsmath, amssymb}   % Environnements mathématiques enrichis
+\usepackage{amsthm}             % Environnements théorèmes
+\usepackage{graphicx}           % Inclusion d'images
+\usepackage{hyperref}           % Liens hypertextes
+\usepackage{geometry}           % Gestion des marges
+\usepackage{titlesec}           % Personnalisation des titres
+\usepackage{setspace}           % Gestion de l'interligne
+\usepackage{xcolor}             % Gestion des couleurs
+\usepackage{booktabs}           % Pour améliorer les tableaux
+\usepackage{fancyhdr}           % Personnalisation des en-têtes et pieds de page
+\usepackage{cleveref}           % Références intelligentes
+\usepackage{caption}            % Pour personnaliser les légendes
+\usepackage{enumitem}           % Pour personnaliser les listes
+\usepackage{pdflscape}          % Pour placer les tableaux en paysage
+
+% ------------------------------------------------------------------------
+% Configuration de la mise en page
+% ------------------------------------------------------------------------
+\geometry{
+    a4paper,
+    margin=25mm
+}
+
+% ------------------------------------------------------------------------
+% Définition des environnements théorèmes, définitions, etc.
+% ------------------------------------------------------------------------
+\theoremstyle{definition}
+\newtheorem{definition}{Définition}[section]
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{theorem}{Théorème}[section]
+
+% ------------------------------------------------------------------------
+% Personnalisation des sections
+% ------------------------------------------------------------------------
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+% ------------------------------------------------------------------------
+% Commande pour mettre en avant les livres en bleu
+% ------------------------------------------------------------------------
+\newcommand{\livre}[1]{\textcolor{blue}{#1}}
+
+% ------------------------------------------------------------------------
+% Configuration des hyperliens
+% ------------------------------------------------------------------------
+\hypersetup{
+    colorlinks=true,          % Les liens sont colorés
+    linkcolor=blue,           % Couleur des liens internes (TOC, références, etc.)
+    urlcolor=blue,            % Couleur des URL
+    citecolor=blue,           % Couleur des citations
+    filecolor=blue,           % Couleur des liens vers des fichiers
+    pdfborder={0 0 0},        % Pas de bordure autour des liens
+    breaklinks=true            % Permet les sauts de ligne dans les liens
+}
+
+% ------------------------------------------------------------------------
+% Configuration des en-têtes et pieds de page
+% ------------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Méthode de Cochrane-Orcutt}
+\fancyhead[R]{Hiver 2025}
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\includegraphics[height=1cm]{logo_universite_laval.png}} % Ajout du logo ERS en bas à droite
+
+
+% ------------------------------------------------------------------------
+% Informations sur le document
+% ------------------------------------------------------------------------
+\title{\textbf{Preuve Complète de la Méthode de Cochrane-Orcutt}}
+\author{GSF-6053}
+\date{Hiver 2025}
+
+% ------------------------------------------------------------------------
+% Début du document
+% ------------------------------------------------------------------------
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+Dans l'analyse des modèles de régression linéaire, l'autocorrélation des erreurs est un problème fréquent, particulièrement dans les séries temporelles. Lorsque les erreurs sont autocorrélées, les estimations des moindres carrés ordinaires (OLS) ne sont plus les plus efficaces et les tests statistiques peuvent être invalidés. La méthode de Cochrane-Orcutt est une procédure itérative conçue pour corriger l'autocorrélation des erreurs de premier ordre, améliorant ainsi la fiabilité des estimations des paramètres du modèle.
+
+\section{Modèle avec Autocorrélation des Erreurs}
+Considérons le modèle de régression linéaire suivant avec des erreurs autocorrélées d'ordre 1 :
+\begin{align}
+Y_t &= X_t \beta + u_t \label{eq:CO_model_original} \\
+u_t &= \rho u_{t-1} + \epsilon_t \label{eq:CO_autocorr_error}
+\end{align}
+où \( \epsilon_t \) est un terme d'erreur aléatoire indépendant et identiquement distribué (\( \epsilon_t \sim \mathcal{N}(0, \sigma^2) \)) et \( |\rho| < 1 \).
+
+\section{Objectif de la Méthode de Cochrane-Orcutt}
+L'objectif principal de la méthode de Cochrane-Orcutt est de transformer le modèle original de manière à éliminer l'autocorrélation des erreurs, permettant ainsi l'application des moindres carrés ordinaires (OLS) pour obtenir des estimateurs sans biais et efficaces des paramètres \( \beta \).
+
+\section{Transformation de Cochrane-Orcutt}
+La transformation de Cochrane-Orcutt est définie par les équations suivantes pour \( t = 2, 3, \dots, T \) :
+\begin{align}
+Y_t^* &= Y_t - \rho Y_{t-1} \\
+X_t^* &= X_t - \rho X_{t-1} \\
+u_t^* &= u_t - \rho u_{t-1}
+\end{align}
+Contrairement à la méthode de Prais-Winsten, Cochrane-Orcutt omet la première observation après transformation, ce qui peut entraîner une perte d'information mais simplifie la procédure.
+
+\subsection{Procédure de Transformation}
+\begin{enumerate}
+    \item \textbf{Estimation Initiale :} Estimer le modèle OLS (\ref{eq:CO_model_original}) pour obtenir les résidus \( \hat{u}_t \).
+    \item \textbf{Estimation de \( \rho \) :} Utiliser les résidus pour estimer le coefficient d'autocorrélation \( \rho \) en régressant \( \hat{u}_t \) sur \( \hat{u}_{t-1} \).
+    \begin{equation}
+    \hat{u}_t = \rho \hat{u}_{t-1} + \nu_t
+    \end{equation}
+    \item \textbf{Transformation des Variables :} Appliquer la transformation de Cochrane-Orcutt aux variables dépendante et indépendantes, en omettant la première observation.
+    \item \textbf{Estimation Finale :} Estimer le modèle transformé en utilisant les moindres carrés ordinaires sur les variables transformées.
+\end{enumerate}
+
+\section{Preuve de la Transformation de Cochrane-Orcutt}
+Pour démontrer que la transformation de Cochrane-Orcutt élimine l'autocorrélation des erreurs, nous allons procéder par étapes détaillées.
+
+\subsection{Modèle Original avec Autocorrélation}
+Considérons le modèle original avec autocorrélation des erreurs d'ordre 1 :
+\begin{align}
+Y_t &= X_t \beta + u_t \label{eq:CO_model_original_repeat} \\
+u_t &= \rho u_{t-1} + \epsilon_t \label{eq:CO_autocorr_error_repeat}
+\end{align}
+où \( \epsilon_t \) est un terme d'erreur aléatoire indépendant avec \( E(\epsilon_t) = 0 \) et \( Var(\epsilon_t) = \sigma^2 \), et \( |\rho| < 1 \).
+
+\subsection{Substitution et Transformation}
+Substituons l'expression de \( u_t \) dans le modèle original (\ref{eq:CO_model_original_repeat}) :
+\begin{align*}
+Y_t &= X_t \beta + \rho u_{t-1} + \epsilon_t \quad \text{(en remplaçant \( u_t \))} \\
+Y_t &= X_t \beta + \rho (Y_{t-1} - X_{t-1} \beta) + \epsilon_t \quad \text{(en remplaçant \( u_{t-1} \))} \\
+Y_t &= X_t \beta + \rho Y_{t-1} - \rho X_{t-1} \beta + \epsilon_t \quad \text{(en distribuant \( \rho \))}
+\end{align*}
+Regroupons les termes :
+\begin{align*}
+Y_t - \rho Y_{t-1} &= (X_t - \rho X_{t-1}) \beta + \epsilon_t \\
+Y_t^* &= X_t^* \beta + \epsilon_t \quad \text{(définissant \( Y_t^* = Y_t - \rho Y_{t-1} \) et \( X_t^* = X_t - \rho X_{t-1} \))}
+\end{align*}
+Ainsi, le modèle transformé est :
+\[
+Y_t^* = X_t^* \beta + \epsilon_t
+\]
+où \( Y_t^* = Y_t - \rho Y_{t-1} \) et \( X_t^* = X_t - \rho X_{t-1} \).
+
+\subsection{Propriétés des Erreurs Transformées}
+Les erreurs transformées sont définies par :
+\[
+u_t^* = u_t - \rho u_{t-1} = \epsilon_t
+\]
+Puisque \( \epsilon_t \) est non corrélée et homoscédastique (\( Var(\epsilon_t) = \sigma^2 \)), les erreurs transformées \( u_t^* \) possèdent les mêmes propriétés :
+\[
+E(u_t^*) = E(\epsilon_t) = 0
+\]
+\[
+Var(u_t^*) = Var(\epsilon_t) = \sigma^2
+\]
+\[
+Cov(u_t^*, u_s^*) = Cov(\epsilon_t, \epsilon_s) = 0 \quad \text{pour } t \neq s
+\]
+Cela montre que les erreurs transformées \( u_t^* \) sont non corrélées et homoscédastiques.
+
+\subsection{Conséquences de la Transformation}
+En appliquant la transformation de Cochrane-Orcutt, le modèle transformé ne présente plus d'autocorrélation des erreurs. Ainsi, les estimateurs \( \hat{\beta} \) obtenus par OLS sur le modèle transformé sont sans biais et efficaces sous les hypothèses classiques de Gauss-Markov.
+
+\subsection{Étapes Détaillées de la Preuve}
+Pour une compréhension approfondie, détaillons chaque étape de la preuve :
+
+\subsubsection{Étape 1 : Substitution des Erreurs}
+Partant des équations (\ref{eq:CO_model_original_repeat}) et (\ref{eq:CO_autocorr_error_repeat}) :
+\[
+Y_t = X_t \beta + \rho u_{t-1} + \epsilon_t
+\]
+
+\subsubsection{Étape 2 : Substitution Récursive}
+Remplaçons \( u_{t-1} \) par son expression à partir de l'équation (\ref{eq:CO_autocorr_error_repeat}) :
+\[
+u_{t-1} = \rho u_{t-2} + \epsilon_{t-1}
+\]
+Cependant, pour simplifier la transformation, nous considérons que les valeurs passées de \( u \) sont déjà intégrées dans les termes de \( Y \) et \( X \).
+
+\subsubsection{Étape 3 : Réarrangement des Termes}
+Regroupons les termes liés à \( Y_t \) et \( Y_{t-1} \) :
+\[
+Y_t - \rho Y_{t-1} = X_t \beta - \rho X_{t-1} \beta + \epsilon_t
+\]
+\[
+Y_t^* = X_t^* \beta + \epsilon_t
+\]
+avec \( Y_t^* = Y_t - \rho Y_{t-1} \) et \( X_t^* = X_t - \rho X_{t-1} \).
+
+\subsubsection{Étape 4 : Analyse des Erreurs Transformées}
+Les erreurs transformées \( u_t^* \) sont :
+\[
+u_t^* = u_t - \rho u_{t-1} = \epsilon_t
+\]
+Puisque \( \epsilon_t \) est indépendant et identiquement distribué, les erreurs transformées \( u_t^* \) sont également indépendantes et identiquement distribuées, sans autocorrélation.
+
+\subsubsection{Étape 5 : Application des Moindres Carrés Ordinaires}
+Avec le modèle transformé :
+\[
+Y_t^* = X_t^* \beta + \epsilon_t
+\]
+et des erreurs \( \epsilon_t \) non autocorrélées et homoscédastiques, l'application des moindres carrés ordinaires (OLS) sur le modèle transformé fournit des estimateurs \( \hat{\beta} \) sans biais et efficaces, satisfaisant les conditions du théorème de Gauss-Markov.
+
+\section{Estimation de \( \rho \)}
+L'estimation du coefficient d'autocorrélation \( \rho \) est cruciale pour la transformation de Cochrane-Orcutt. Une méthode courante consiste à utiliser les résidus du modèle OLS initial pour estimer \( \rho \) via une régression des résidus sur leurs valeurs retardées :
+\[
+\hat{u}_t = \rho \hat{u}_{t-1} + \nu_t
+\]
+où \( \nu_t \) est l'erreur de cette régression. L'estimateur de \( \rho \) obtenu est ensuite utilisé dans les étapes de transformation des variables.
+
+\subsection{Procédure d'Estimation de \( \rho \)}
+\begin{enumerate}
+    \item \textbf{Estimation Initiale du Modèle OLS :} Estimer le modèle original (\ref{eq:CO_model_original_repeat}) par OLS pour obtenir les résidus \( \hat{u}_t \).
+    \item \textbf{Régression des Résidus :} Régressuer \( \hat{u}_t \) sur \( \hat{u}_{t-1} \) :
+    \[
+    \hat{u}_t = \rho \hat{u}_{t-1} + \nu_t
+    \]
+    \item \textbf{Obtention de \( \hat{\rho} \) :} Utiliser les estimateurs de cette régression pour obtenir \( \hat{\rho} \).
+\end{enumerate}
+
+\subsection{Considérations sur l'Estimation de \( \rho \)}
+\begin{itemize}
+    \item \textbf{Consistance :} L'estimateur \( \hat{\rho} \) est consistant si \( \rho \) est bien spécifié et si les erreurs sont correctement modélisées.
+    \item \textbf{Efficacité :} Pour améliorer l'efficacité de l'estimation, des méthodes comme le maximum de vraisemblance peuvent être utilisées.
+    \item \textbf{Tests de Significativité :} Il est important de tester la significativité de \( \hat{\rho} \) pour s'assurer que l'autocorrélation est effectivement présente et significative.
+\end{itemize}
+
+\section{Propriétés de l'Estimateur Transformé}
+Après transformation, l'estimateur \( \hat{\beta} \) obtenu via les moindres carrés ordinaires sur le modèle transformé possède les propriétés suivantes :
+\begin{itemize}
+    \item \textbf{Sans Biais :} \( E(\hat{\beta}) = \beta \)
+    \item \textbf{Efficace :} Sous les hypothèses classiques de Gauss-Markov, \( \hat{\beta} \) est l'estimateur linéaire sans biais ayant la plus petite variance.
+    \item \textbf{Consistant :} L'estimateur converge en probabilité vers la vraie valeur \( \beta \) lorsque la taille de l'échantillon augmente.
+\end{itemize}
+
+\subsection{Démonstration de l'Unbiasedness}
+Considérons le modèle transformé :
+\[
+Y_t^* = X_t^* \beta + \epsilon_t
+\]
+Prenons l'espérance conditionnelle de \( Y_t^* \) :
+\[
+E(Y_t^* | X_t^*) = E(X_t^* \beta + \epsilon_t | X_t^*) = X_t^* \beta + E(\epsilon_t | X_t^*) = X_t^* \beta
+\]
+Ainsi, l'estimateur \( \hat{\beta} \) issu des moindres carrés ordinaires est sans biais :
+\[
+E(\hat{\beta}) = \beta
+\]
+
+\subsection{Démonstration de l'Efficacité}
+Sous les hypothèses de Gauss-Markov (linéarité, exogénéité, homoscédasticité, absence d'autocorrélation, etc.), l'estimateur OLS est BLUE (Best Linear Unbiased Estimator). Après transformation de Cochrane-Orcutt, ces hypothèses sont satisfaites dans le modèle transformé, ce qui garantit que \( \hat{\beta} \) est l'estimateur linéaire sans biais avec la plus petite variance possible.
+
+\subsection{Démonstration de la Consistance}
+La consistance de \( \hat{\beta} \) repose sur les conditions suivantes :
+\begin{itemize}
+    \item \( \frac{1}{T} X^{*'} X^* \) converge vers une matrice définie positive.
+    \item \( \frac{1}{T} X^{*'} \epsilon \) converge en probabilité vers zéro.
+\end{itemize}
+Sous ces conditions, par le théorème des moindres carrés, \( \hat{\beta} \) converge en probabilité vers \( \beta \).
+
+\section{Conclusion}
+La méthode de Cochrane-Orcutt est une procédure efficace pour corriger l'autocorrélation des erreurs dans un modèle de régression linéaire. En transformant les variables dépendantes et indépendantes, cette méthode permet l'application des moindres carrés ordinaires de manière appropriée, assurant ainsi des estimations fiables des paramètres du modèle. Bien que cette méthode puisse entraîner une perte d'information en omettant la première observation, elle simplifie la procédure de transformation et reste largement utilisée dans l'analyse des séries temporelles.
+
+\section{Références}
+Pour une discussion détaillée sur la méthode de Cochrane-Orcutt et ses propriétés, voir \textcolor{blue}{Wooldridge chapitre 8}.
+
+\end{document}

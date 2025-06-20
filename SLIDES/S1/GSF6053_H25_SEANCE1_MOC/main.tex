@@ -1,0 +1,511 @@
+\documentclass{beamer}
+
+% Encodages et langues
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+% Packages supplémentaires
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs} % Pour des tableaux plus esthétiques
+\usepackage{hyperref} % Pour les hyperliens
+\usepackage{pgfplots} % Pour les graphiques avancés
+\pgfplotsset{compat=1.17}
+
+% Thème et couleurs
+\usetheme{default} % Un thème plus moderne et professionnel
+\usecolortheme{seagull} % Palette de couleurs harmonieuse
+
+% Police
+\usepackage{lmodern} % Police améliorée
+
+% Informations sur la présentation
+\title[S01 Régression et MCO]{Régression et Moindres Carrés Ordinaires\\ (Séance 1)}
+\subtitle{GSF-6053 : Économétrie Financière}
+\author[SP. Boucher]{Simon-Pierre Boucher\inst{1}}
+\institute[Université Laval]
+{
+  \inst{1}%
+  Département de Finance, Assurance et Immobilier\\
+  Faculté des Sciences de l'Administration\\
+  Université Laval
+}
+\date[Hiver 2025]{14 Janvier 2025}
+
+% Configuration du pied de page avec logo en bas à droite
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.7\paperwidth,ht=2ex,dp=1ex,left]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.3\paperwidth,ht=2ex,dp=1ex,right]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{0.5em}
+      \insertframenumber{} / \inserttotalframenumber\hspace*{0.5em}
+      \raisebox{0.2cm}{\includegraphics[height=0.6cm]{logo_universite_laval.png}} % Ajustement du logo
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamertemplate{navigation symbols}{} % Supprime les symboles de navigation par défaut
+
+\begin{document}
+
+% Page de titre
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Références
+\begin{frame}{Références}
+\textbf{Obligatoires :}
+\begin{itemize}
+  \item \textbf{Wooldridge :} chapitres 2 à 7
+\end{itemize}
+\vspace{0.5cm}
+\textbf{Complémentaires :}
+\begin{itemize}
+  \item \textbf{Gujarati et Porter :} chapitres 1 à 9
+  \item \textbf{Greene :} chapitres 2, 3, 4, 5, 9, 14, 20, appendices C et D
+\end{itemize}
+\end{frame}
+
+% Plan de la séance
+\begin{frame}{Plan de la séance}
+  \tableofcontents
+\end{frame}
+
+% Section Modèle de Régression
+\section{Modèle de Régression}
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Modèle de Régression}
+\begin{itemize}
+  \item Espérance conditionnelle d'une variable dépendante \textbf{(Y)} conditionnelle à la valeur connue des régresseurs \textbf{(X)}
+  
+  \begin{align*}
+    \mathbb{E}(Y \vert X_i) = f(X_i)
+  \end{align*}
+  Où \( f(X_i) \) est une fonction des variables explicatives \( \mathbf{X} \)
+  \vspace{0.5cm}
+  \item Relation conditionnelle linéaire
+  
+  \begin{align*}
+    \mathbb{E}(Y \vert X_i) = \beta_1 + \beta_2 X_i
+  \end{align*}
+  \item Composition de \( Y \) :
+  \begin{itemize}
+    \item Partie systématique ou déterministe, \( \mathbb{E}(Y \vert X_i) \)
+    \item Partie aléatoire et non systématique, \( \mu_i \)
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Modèle de Régression}
+\begin{itemize}
+  \item Modèle de Régression Linéaire Simple 
+  \begin{align*}
+    Y_i = \beta_1 + \beta_2 X_i + \mu_i 
+  \end{align*}
+  \item Prendre l'espérance des deux côtés 
+  \begin{align*}
+    \mathbb{E}(Y_i \vert X_i) = \mathbb{E}(Y \vert X_i) + \mathbb{E}(\mu_i)
+  \end{align*}
+  Sachant que \( \mathbb{E}(Y_i \vert X_i) = \mathbb{E}(Y \vert X_i) \), alors \( \mathbb{E}(\mu_i) = 0 \)
+  \item Les paramètres obtenus à partir d'un échantillon sont des estimateurs (notés avec \( \hat{} \))
+  \begin{align*}
+    \hat{Y}_i = \hat{\beta}_1 + \hat{\beta}_2 X_i
+  \end{align*}
+  \begin{align*}
+    Y_i = \hat{\beta}_1 + \hat{\beta}_2 X_i + \hat{\mu}_i
+  \end{align*}
+  \( \hat{\mu}_i \) représente l'estimateur du terme d'erreur, le résidu
+\end{itemize}
+\end{frame}
+
+% Section Moindres Carrés Ordinaires (En sommation)
+\section{Moindres Carrés Ordinaires (En sommation)}
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Moindres Carrés Ordinaires (En sommation)}
+\begin{itemize}
+  \item Définissons les résidus
+  \begin{align*}
+    \hat{\mu}_i = Y_i - \hat{Y}_i = Y_i - \hat{\beta}_1 - \hat{\beta}_2 X_i
+  \end{align*}
+  \item Choisir des estimateurs de \( \hat{\beta}_1 \) et \( \hat{\beta}_2 \) de façon à minimiser la somme des carrés des résidus 
+  \begin{align*}
+    \sum_{i=1}^{N} \hat{\mu}_i^2 & = \left[\hat{\mu}_1^2 + \hat{\mu}_2^2 + \dots + \hat{\mu}_N^2 \right] \\ 
+    & = \sum_{i=1}^{N} (Y_i - \hat{\beta}_1 - \hat{\beta}_2 X_i)^2
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Moindres Carrés Ordinaires (En sommation)}
+\begin{itemize}
+  \item Minimiser la somme des carrés des résidus par rapport à \( \hat{\beta}_1 \) et \( \hat{\beta}_2 \)
+  \begin{align*}
+    \min_{\hat{\beta}_1, \hat{\beta}_2} \sum_{i=1}^{N} (Y_i - \hat{\beta}_1 - \hat{\beta}_2 X_i)^2 = \min_{\hat{\beta}_1, \hat{\beta}_2} \sum_{i=1}^{N} \hat{\mu}_i^2
+  \end{align*}
+  \item Équations normales 
+  \begin{equation}
+    \frac{\partial \sum_{i=1}^{N} \hat{\mu}_i^2}{\partial \hat{\beta}_1} = -2 \sum_{i=1}^N (Y_i - \hat{\beta}_1 - \hat{\beta}_2 X_i) = 0
+  \end{equation}
+  \begin{equation}
+    \frac{\partial \sum_{i=1}^{N} \hat{\mu}_i^2}{\partial \hat{\beta}_2} = -2 \sum_{i=1}^N X_i (Y_i - \hat{\beta}_1 - \hat{\beta}_2 X_i) = 0
+  \end{equation}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Moindres Carrés Ordinaires (En sommation)}
+\begin{itemize}
+  \item Solution de \( \hat{\beta}_1 \) à l'aide de l'équation (1)
+  \begin{align*}
+    -2 \sum_{i=1}^N (Y_i - \hat{\beta}_1 - \hat{\beta}_2 X_i) = 0
+  \end{align*}
+  \begin{align*}
+    \sum_{i=1}^N Y_i - N \hat{\beta}_1 - \hat{\beta}_2 \sum_{i=1}^N X_i = 0
+  \end{align*}
+  \begin{align*}
+    N \hat{\beta}_1 = \sum_{i=1}^N Y_i - \hat{\beta}_2 \sum_{i=1}^N X_i
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Moindres Carrés Ordinaires (En sommation)}
+\begin{itemize}
+  \item Solution de \( \hat{\beta}_1 \) à l'aide de l'équation (1)
+  
+  \vspace{0.5cm}
+  On pose la propriété suivante : 
+  \begin{itemize}
+    \item \( \sum_{i=1}^N Y_i = N \overline{Y} \) 
+    \item \( \sum_{i=1}^N X_i = N \overline{X} \)
+  \end{itemize}
+  \begin{align*}
+    N \hat{\beta}_1 = N \overline{Y} - N \hat{\beta}_2 \overline{X}
+  \end{align*}
+  \begin{align*}
+    \hat{\beta}_1 = \frac{N \overline{Y}}{N} - \frac{N \hat{\beta}_2 \overline{X}}{N}
+  \end{align*}
+  
+  \begin{block}{Solution de \( \hat{\beta}_1 \)}
+    \begin{align*}
+      \hat{\beta}_1 = \overline{Y} - \hat{\beta}_2 \overline{X}
+    \end{align*}
+  \end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Moindres Carrés Ordinaires (En sommation)}
+\begin{itemize}
+  \item Solution de \( \hat{\beta}_2 \) à l'aide de l'équation (2)
+  \begin{align*}
+    -2 \sum_{i=1}^N X_i (Y_i - \hat{\beta}_1 - \hat{\beta}_2 X_i) = 0
+  \end{align*}
+  \begin{align*}
+    \sum_{i=1}^N X_i Y_i - \hat{\beta}_1 \sum_{i=1}^N X_i - \hat{\beta}_2 \sum_{i=1}^N X_i^2 = 0
+  \end{align*}
+  Sachant \( \hat{\beta}_1 = \overline{Y} - \hat{\beta}_2 \overline{X} \)
+  \begin{align*}
+    \sum_{i=1}^N X_i Y_i - [\overline{Y} - \hat{\beta}_2 \overline{X}] \sum_{i=1}^N X_i - \hat{\beta}_2 \sum_{i=1}^N X_i^2 = 0
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Moindres Carrés Ordinaires (En sommation)}
+\begin{itemize}
+  \item Solution de \( \hat{\beta}_2 \) à l'aide de l'équation (2)
+  \begin{align*}
+    \sum_{i=1}^N X_i Y_i - \overline{Y} \sum_{i=1}^N X_i - \hat{\beta}_2 \overline{X} \sum_{i=1}^N X_i - \hat{\beta}_2 \sum_{i=1}^N X_i^2 = 0
+  \end{align*}
+  \begin{align*}
+    \sum_{i=1}^N X_i Y_i - N \overline{X} \overline{Y} + \hat{\beta}_2 N \overline{X}^2 - \hat{\beta}_2 \sum_{i=1}^N X_i^2 = 0
+  \end{align*}
+  \begin{align*}
+    \sum_{i=1}^N X_i Y_i - N \overline{X} \overline{Y} = \hat{\beta}_2 \left[ \sum_{i=1}^N X_i^2 - N \overline{X}^2 \right]
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Moindres Carrés Ordinaires (En sommation)}
+\begin{itemize}
+  \item Solution de \( \hat{\beta}_2 \) à l'aide de l'équation (2)
+  \begin{align*}
+    \hat{\beta}_2 = \frac{\sum_{i=1}^N X_i Y_i - N \overline{X} \overline{Y}}{\sum_{i=1}^N X_i^2 - N \overline{X}^2}
+  \end{align*}
+  Sachant que 
+  \begin{itemize}
+    \item \( \sum_{i=1}^N X_i Y_i - N \overline{X} \overline{Y} = \sum_{i=1}^N (X_i - \overline{X})(Y_i - \overline{Y}) \)
+    \item \( \sum_{i=1}^N X_i^2 - N \overline{X}^2 = \sum_{i=1}^N (X_i - \overline{X})^2 \)
+  \end{itemize}
+  \begin{block}{Solution de \( \hat{\beta}_2 \)}
+    \begin{align*}
+      \hat{\beta}_2 = \frac{\sum_{i=1}^N (X_i - \overline{X})(Y_i - \overline{Y})}{\sum_{i=1}^N (X_i - \overline{X})^2}
+    \end{align*}
+  \end{block}
+\end{itemize}
+\end{frame}
+
+% Section Moindres Carrés Ordinaires (Format Matricielle)
+\section{Moindres Carrés Ordinaires (Format Matricielle)}
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Moindres Carrés Ordinaires (Format Matricielle)}
+\begin{itemize}
+  \item Vecteur de la variable à expliquer \textbf{(n $\times$ 1)}
+  \[
+    Y = \begin{pmatrix}
+      y_1 \\ 
+      y_2 \\ 
+      \vdots \\
+      y_n \\
+    \end{pmatrix}
+  \]
+  \item Matrice de variables explicatives \textbf{(n $\times$ (k+1))}
+  \[
+    X = \begin{bmatrix}
+      1 & x_{11} & x_{21} & \cdots & x_{k1} \\ 
+      1 & x_{12} & \cdots & \cdots & x_{k2} \\ 
+      1 & \vdots & \vdots & \ddots & \vdots \\ 
+      1 & x_{1n} & \cdots & \cdots & x_{kn}
+    \end{bmatrix}
+  \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Moindres Carrés Ordinaires (Format Matricielle)}
+\begin{itemize}
+  \item Vecteur de coefficients associés \textbf{(k+1 $\times$ 1)}
+  \[
+    \beta = \begin{pmatrix}
+      \beta_0 \\ 
+      \beta_1 \\ 
+      \beta_2 \\ 
+      \vdots \\
+      \beta_k \\
+    \end{pmatrix}
+  \]
+  \item Vecteur associé au terme d'erreur \textbf{(n $\times$ 1)}
+  \[
+    u = \begin{pmatrix}
+      u_1 \\ 
+      u_2 \\ 
+      \vdots \\
+      u_n \\
+    \end{pmatrix}
+  \]
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Moindres Carrés Ordinaires (Format Matricielle)}
+\begin{itemize}
+  \item Modèle Univarié 
+  \begin{align*}
+    \begin{pmatrix}
+      y_1 \\ 
+      y_2 \\ 
+      \vdots \\
+      y_n \\
+    \end{pmatrix} = 
+    \begin{bmatrix}
+      1 & x_{11} & x_{21} & \cdots & x_{k1} \\ 
+      1 & x_{12} & \cdots & \cdots & x_{k2} \\ 
+      1 & \vdots & \vdots & \ddots & \vdots \\ 
+      1 & x_{1n} & \cdots & \cdots & x_{kn}
+    \end{bmatrix}
+    \begin{pmatrix}
+      \beta_0 \\ 
+      \beta_1 \\ 
+      \beta_2 \\ 
+      \vdots \\
+      \beta_k \\
+    \end{pmatrix} + 
+    \begin{pmatrix}
+      u_1 \\ 
+      u_2 \\ 
+      \vdots \\
+      u_n \\
+    \end{pmatrix}
+  \end{align*}
+  Que nous réécrirons comme suit : 
+  \begin{align*}
+    Y = X \beta + u 
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Moindres Carrés Ordinaires (Format Matricielle)}
+\begin{itemize}
+  \item Hypothèses distributionnelles sur \( u \)
+  \begin{itemize}
+    \item \( u \sim \text{iid} \) et \( \mathbb{E}(u) = 0 \)
+    \item \( \text{Var}(u) = \sigma^2 I \)
+    \item \( u \sim \text{iid } N(0, \sigma^2) \)
+  \end{itemize}
+  \begin{align*}
+    \mathbb{E}(u) = \begin{pmatrix}
+      \mathbb{E}(u_1) = 0 \\ 
+      \mathbb{E}(u_2) = 0 \\ 
+      \vdots \\
+      \mathbb{E}(u_n) = 0 \\
+    \end{pmatrix}
+  \end{align*}
+  \item Il n'y a pas de corrélation sérielle des erreurs 
+  \begin{align*}
+    \text{Var}(u) = \mathbb{E}(uu') = \sigma^2 I 
+  \end{align*}
+  \item Découle de l'indépendance
+  \begin{align*}
+    \text{Cov}(u_i, u_j) = 0 \quad \text{pour } i \neq j \quad \forall i, j
+  \end{align*}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Moindres Carrés Ordinaires (Format Matricielle)}
+\textbf{Rappel :}
+\begin{align*}
+  \text{Var}(u) = \mathbb{E}(uu') - \mathbb{E}(u)\mathbb{E}(u') 
+\end{align*}
+\textbf{Avec l'hypothèse d'indépendance :}
+\begin{align*}
+  \text{Var}(u) = \begin{pmatrix}
+    \sigma^2 & \cdots & 0 \\ 
+    \vdots & \sigma^2 & \vdots \\ 
+    0 & \cdots & \sigma^2
+  \end{pmatrix} = \sigma^2 \begin{pmatrix}
+    1 & \cdots & 0 \\ 
+    \vdots & 1 & \vdots \\ 
+    0 & \cdots & 1
+  \end{pmatrix} 
+\end{align*}
+\end{frame}
+
+\begin{frame}{Dérivation MCO (Format Matricielle)}
+\begin{align*}
+  \hat{\beta} = \arg\min_{\beta} (\hat{u}'\hat{u})
+\end{align*}
+\begin{align*}
+  \hat{\beta} = \arg\min_{\beta} \left( (Y - X \hat{\beta})' (Y - X \hat{\beta}) \right)
+\end{align*}
+Distribution des termes de la multiplication matricielle :
+\begin{align*}
+  (Y - X \beta)' (Y - X \beta) = Y'Y - Y'X \hat{\beta} - \hat{\beta}'X'Y + \hat{\beta}'X'X \hat{\beta}
+\end{align*}
+Sachant 
+\begin{align*}
+  Y'X \hat{\beta} = \hat{\beta}'X'Y
+\end{align*}
+Alors :
+\begin{align*}
+  (Y - X \beta)' (Y - X \beta) = Y'Y - 2 Y'X \hat{\beta} + \hat{\beta}'X'X \hat{\beta}
+\end{align*}
+\end{frame}
+
+\begin{frame}{Dérivation MCO (Format Matricielle)}
+\begin{itemize}
+  \item Dérivée de la somme des résidus au carré par rapport à \( \beta \)
+  
+  \begin{align*}
+    \frac{\partial (\text{RSS})}{\partial \hat{\beta}} = \frac{\partial (Y'Y - 2 Y'X \hat{\beta} + \hat{\beta}'X'X \hat{\beta})}{\partial \hat{\beta}}
+  \end{align*}
+  Sachant
+  \begin{align*}
+    \frac{\partial (Y'X \hat{\beta})}{\partial \hat{\beta}} = X'Y
+  \end{align*}
+  \begin{align*}
+    \frac{\partial (\hat{\beta}'X'X \hat{\beta})}{\partial \hat{\beta}} = 2 X'X \hat{\beta}
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Dérivation MCO (Format Matricielle)}
+\begin{align*}
+  \frac{\partial (\text{RSS})}{\partial \hat{\beta}} = -2 X'Y + 2 X'X \hat{\beta} = 0
+\end{align*}
+\begin{align*}
+  X'Y = X'X \hat{\beta}
+\end{align*}
+\begin{align*}
+  \hat{\beta} = (X'X)^{-1} X'Y
+\end{align*}
+\begin{block}{Estimateur de \( \hat{\beta} \) par MCO}
+  \begin{align*}
+    \hat{\beta} = (X'X)^{-1} X'Y
+  \end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Dérivation MCO (Format Matricielle)}
+\begin{itemize}
+  \item Il n'existe pas d'estimateur de \( \sigma^2 \) pour la méthode des Moindres Carrés Ordinaires 
+  \item On peut estimer empiriquement comme suit :
+  \begin{align*}
+    \hat{\sigma}^2 = \frac{1}{T} \sum_{i=1}^N \hat{u}_i^2 = \frac{\hat{u}'\hat{u}}{N}
+  \end{align*}
+\end{itemize}
+\end{frame}
+
+% Section Exemple Numérique
+\section{Exemple Numérique}
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Exemple Numérique}
+\begin{itemize}
+  \item Nous allons générer des variables aléatoires à l’aide d’un modèle dont nous allons déterminer les paramètres.
+  \item Nous allons utiliser un modèle linéaire simple ayant le format suivant :
+  \begin{align*}
+    Y = \beta_1 + \beta_2 X_i + \epsilon_i
+  \end{align*}
+  \begin{itemize}
+    \item L'intercepte de notre modèle sera de \( \beta_1 = 60 \).
+    \item La pente de notre modèle sera de \( \beta_2 = 2 \).
+    \item Nous allons faire l'hypothèse que notre terme d'erreur suit une loi normale de moyenne 0 et variance 4 (\( \epsilon \sim N(0,4) \)).
+  \end{itemize}
+  \item Il nous est maintenant possible de déterminer une valeur pour chaque \( Y_i \) en utilisant les \( X_i \).
+  \item Pour les \( X_i \) nous allons générer uniformément 40 observations entre 0 et 40. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Nuage de points et régression linéaire (\( \epsilon \sim N(0,2) \))}
+  \includegraphics[width=10cm, height=8cm]{ols_2.png}
+\end{frame}
+
+\begin{frame}{Nuage de points et régression linéaire (\( \epsilon \sim N(0,4) \))}
+  \includegraphics[width=10cm, height=8cm]{ols_4.png}
+\end{frame}
+
+\begin{frame}{Nuage de points et régression linéaire (\( \epsilon \sim N(0,6) \))}
+  \includegraphics[width=10cm, height=8cm]{ols_6.png}
+\end{frame}
+
+\begin{frame}{Nuage de points et régression linéaire (\( \epsilon \sim N(0,8) \))}
+  \includegraphics[width=10cm, height=8cm]{ols_8.png}
+\end{frame}
+
+\begin{frame}{Exemple Numérique}
+\begin{table}
+\begin{center}
+\begin{tabular}{l c c c c}
+\hline
+ & \( \epsilon \sim N(0,2) \) & \( \epsilon \sim N(0,4) \) & \( \epsilon \sim N(0,6) \) & \( \epsilon \sim N(0,8) \) \\
+\hline
+(Intercept) & \( 59.30^{***} \) & \( 59.28^{***} \) & \( 60.89^{***} \) & \( 55.68^{***} \) \\
+            & \( (0.68) \)      & \( (1.35) \)      & \( (2.43) \)      & \( (2.31) \)      \\
+X           & \( 2.02^{***} \)  & \( 2.03^{***} \)  & \( 2.00^{***} \)  & \( 2.13^{***} \)  \\
+            & \( (0.03) \)      & \( (0.06) \)      & \( (0.10) \)      & \( (0.10) \)      \\
+\hline
+\( R^2 \)       & \( 0.99 \)        & \( 0.96 \)        & \( 0.89 \)        & \( 0.91 \)        \\
+Adj. \( R^2 \)  & \( 0.99 \)        & \( 0.96 \)        & \( 0.89 \)        & \( 0.91 \)        \\
+Num. obs.       & \( 50 \)          & \( 50 \)          & \( 50 \)          & \( 50 \)          \\
+\hline
+\multicolumn{5}{l}{\scriptsize{\(^{***}p<0.001\); \(^{**}p<0.01\); \(^{*}p<0.05\)}}
+\end{tabular}
+\caption{Table de régression}
+\label{table:coefficients}
+\end{center}
+\end{table}
+\end{frame}
+
+\end{document}

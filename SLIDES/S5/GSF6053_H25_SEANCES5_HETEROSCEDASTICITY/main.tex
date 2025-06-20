@@ -1,0 +1,554 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usetheme{default}
+\usecolortheme{seagull}
+
+\title[S03 Extensions MLS]{Hétéroscédasticité et Tests diagnostiques\\ (Séance 5)}
+\subtitle{GSF-6053: Économétrie Financière}
+\author[SP. Boucher]{Simon-Pierre Boucher\inst{1}}
+\institute[Université Laval]
+{
+  \inst{1}%
+  Département de finance, assurance et immobilier\\
+  Faculté des sciences de l'administration\\
+  Université Laval}
+\date[Hiver 2025]{11 février 2025}
+% Configuration du pied de page avec logo en bas à droite
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.7\paperwidth,ht=2ex,dp=1ex,left]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.3\paperwidth,ht=2ex,dp=1ex,right]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{0.5em}
+      \insertframenumber{} / \inserttotalframenumber\hspace*{0.5em}
+      \raisebox{0.2cm}{\includegraphics[height=0.6cm]{logo_universite_laval.png}} % Ajustement du logo
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamertemplate{navigation symbols}{} % Supprime les symboles de navigation par défaut
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Références}
+\textbf{Obligatoires:}
+\begin{itemize}
+
+\item \textbf{Woolridge:} chapitres 3, 8, 12.
+\end{itemize}
+\vspace{0.5cm}
+\textbf{Complémentaires:}
+\begin{itemize}
+\item \textbf{Gujarati et Porter:} chapitres 10, 11, 12, 13 et appendice C.
+\item \textbf{Greene:} chapitres 2, 3, 4, 5, 9, 14, 20 C et D
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Plan de la séance}
+  \tableofcontents
+\end{frame}
+
+\section{Hétéroscédasticité}
+
+\frame{\tableofcontents[current]}
+
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Homoscédasticité}
+\begin{itemize}
+\item OLS makes the assumption that the variance of the error term is constant.
+\begin{align*}
+V(u_i)= \sigma^2
+\end{align*}
+\end{itemize}
+\end{block}
+
+\begin{block}{Hétéroscédasticité}
+\begin{itemize}
+\item Si les résidus n'ont pas une variance constante, on dit qu'ils sont hétéroscédastiques.
+\begin{align*}
+V(u_i)= \sigma_i^2
+\end{align*}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Forme de $\Omega$}
+\begin{itemize}
+\item On connait rarement $\Omega$, il faut spécifier une forme pour cette matrice qui est gérable.
+\item Estimation de tous les $\sigma_i^2$ pour chaque observations. 
+\begin{align*}
+\Omega= \begin{bmatrix} \sigma_1^2 & 0 & \cdots & 0 \\
+0 & \sigma_{2}^2 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \sigma_T^2
+\end{bmatrix}
+\end{align*}
+\begin{itemize}
+\item N’est pas une forme estimable, car le nombre de paramètres à estimer $T+K>T$.
+\end{itemize}
+\item Il faut donc spécifier un modèle (une paramétrisation) pour la forme de matrice $\Omega$ pour réduire le nombre de paramètres inconnus.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Hétéroscédasticité groupée}
+\begin{itemize}
+\item On a une variance hétéroscédastique, mais en sous-groupe.
+\item À l’intérieur du sous-groupe, la variance est constante.
+\end{itemize}
+\begin{align*}
+\sigma_t^2=\sigma_{10}^2, \hspace{0.5cm} t=1,...,T_1
+\end{align*}
+
+\begin{align*}
+\sigma_t^2=\sigma_{20}^2, \hspace{0.5cm} t=T_{1+1},...,T
+\end{align*}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Hétéroscédasticité groupée}
+\begin{align*}
+\Omega=\begin{bmatrix}
+\begin{bmatrix}
+\sigma_{10}^2 & 0 & \cdots  & 0 \\ 
+0 & \sigma_{10}^2  & \cdots & 0 \\ 
+\vdots & \vdots & \ddots & \vdots \\ 
+0 & 0 & \cdots & \sigma_{10}^2
+\end{bmatrix} & \begin{bmatrix}
+0 & 0 & \cdots  & 0 \\ 
+0 & 0  & \cdots & 0 \\ 
+\vdots & \vdots & \ddots & \vdots \\ 
+0 & 0 & \cdots & 0
+\end{bmatrix} \\ \\
+ \begin{bmatrix}
+0 & 0 & \cdots  & 0 \\ 
+0 & 0  & \cdots & 0 \\ 
+\vdots & \vdots & \ddots & \vdots \\ 
+0 & 0 & \cdots & 0
+\end{bmatrix} & \begin{bmatrix}
+\sigma_{20}^2 & 0 & \cdots  & 0 \\ 
+0 & \sigma_{20}^2  & \cdots & 0 \\ 
+\vdots & \vdots & \ddots & \vdots \\ 
+0 & 0 & \cdots & \sigma_{20}^2
+\end{bmatrix} 
+\end{bmatrix}
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Hétéroscédasticité groupée}
+On peut réécrire la matrice $\Omega$, avec hétéroscédasticité groupée comme suit:
+\begin{align*}
+\Omega=
+\begin{bmatrix}
+\sigma_{10}^2 I_{T_1} & 0\\ 
+ 0 & \sigma_{20}^2 I_{T_2}
+\end{bmatrix}
+\end{align*}
+Sachant:
+\begin{align*}
+\sigma_{10}^2 I_{T_1}=\begin{bmatrix}
+\sigma_{10}^2 & 0 & \cdots  & 0 \\ 
+0 & \sigma_{10}^2  & \cdots & 0 \\ 
+\vdots & \vdots & \ddots & \vdots \\ 
+0 & 0 & \cdots & \sigma_{10}^2
+\end{bmatrix} \textbf{et}\hspace{0.2cm} \sigma_{20}^2 I_{T_2}=\begin{bmatrix}
+\sigma_{20}^2 & 0 & \cdots  & 0 \\ 
+0 & \sigma_{20}^2  & \cdots & 0 \\ 
+\vdots & \vdots & \ddots & \vdots \\ 
+0 & 0 & \cdots & \sigma_{20}^2
+\end{bmatrix}
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Hétéroscédasticité groupée}
+Dans un cadre plus général:
+\begin{align*}
+\Omega= \begin{bmatrix} \sigma_{10}^2I_{T_1} & 0 & \cdots & 0 \\
+0 & \sigma_{20}^2I_{T_2} & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \sigma_{G0}^2I_{T_G}
+\end{bmatrix}
+\end{align*}
+\begin{align*}
+\Omega^{-1}= \begin{bmatrix} \frac{1}{\sigma_{10}^2I_{T_1}} & 0 & \cdots & 0 \\
+0 & \frac{1}{\sigma_{20}^2I_{T_2}} & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \frac{1}{\sigma_{G0}^2I_{T_G}}
+\end{bmatrix}
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Hétéroscédasticité groupée}
+Dans un cadre plus général:
+
+\begin{align*}
+P^{-1}= \begin{bmatrix} \frac{1}{\sigma_{10}I_{T_1}} & 0 & \cdots & 0 \\
+0 & \frac{1}{\sigma_{20}I_{T_2}} & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & \frac{1}{\sigma_{G0}I_{T_G}}
+\end{bmatrix}
+\end{align*}
+\begin{itemize}
+\item Les moindres carrés sont donc pondérés par la matrice $P^{-1}$, ce qui revient à pondérer par l’écart type qui est hétéroscédastique par groupe $G$.
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Hétéroscédasticité groupée}
+Modèle transformé:
+
+\begin{align*}
+\begin{bmatrix} 
+\frac{Y_1}{\sqrt{Z_1}}\\
+\frac{Y_2}{\sqrt{Z_2}}\\
+\vdots \\
+\frac{Y_T}{\sqrt{Z_T}}
+\end{bmatrix}
+= 
+\begin{bmatrix} 
+\frac{1}{\sqrt{Z_1}}\\
+\frac{1}{\sqrt{Z_2}}\\
+\vdots \\
+\frac{1}{\sqrt{Z_T}}
+\end{bmatrix}
+\beta_0
++
+\begin{bmatrix} 
+\frac{X_{11}}{\sqrt{Z_1}}\\
+\frac{X_{12}}{\sqrt{Z_2}}\\
+\vdots \\
+\frac{X_{1T}}{\sqrt{Z_T}}
+\end{bmatrix}
+\beta_1
++ \cdots + 
+\begin{bmatrix} 
+\frac{X_{K-11}}{\sqrt{Z_1}}\\
+\frac{X_{K-12}}{\sqrt{Z_2}}\\
+\vdots \\
+\frac{X_{K-1T}}{\sqrt{Z_T}}
+\end{bmatrix}
+\beta_K 
++
+\begin{bmatrix} 
+\frac{u_1}{\sqrt{Z_1}}\\
+\frac{u_2}{\sqrt{Z_2}}\\
+\vdots \\
+\frac{u_T}{\sqrt{Z_T}}
+\end{bmatrix}
+\end{align*}
+\begin{itemize}
+\item Remarquez que le modèle devient sans constante. Ceci a des implications entre autres pour le $R^2$ du modèle.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Variance varie en fonction de plusieurs variables exogènes}
+Soit le modèle suivant:
+\begin{align*}
+Y_t=\beta_0 + \beta_1 X_{1t}+\cdots+ \beta_{K-1} X_{k-1t}+u_t
+\end{align*}
+\begin{align*}
+\sigma_t^2=\alpha_0+\alpha_1 Z_{1t}+\cdots+\alpha_H Z_{Ht}+\epsilon_t
+\end{align*}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Variance varie en fonction de plusieurs variables exogènes}
+\begin{itemize}
+\item Cette paramétrisation de la variance demande d’estimer $\hat{\sigma}_t^2$ par une régression artificielle. 
+\begin{itemize}
+\item On utilise les résidus au carré, $\hat{u}^2$, pour avoir une proxy de $\sigma_t^1$.
+\item On régresse les $\hat{u}^2$ sur les variables exogènes pour trouver les
+paramètres $\alpha_h$ définissant la variance.
+\item On trouve les valeurs des $\hat{\sigma}_t^2$ estimés par le modèle avec les résultats de
+la régression auxiliaire :
+\begin{align*}
+\hat{\sigma}_t^2=\hat{\alpha}_0+\hat{\alpha}_1 Z_{1t}+\cdots+\hat{\alpha}_HZ_{Ht}
+\end{align*}
+\end{itemize}
+\item Cette technique demande des données supplémentaires sur les exogènes.
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Hétéroscédasticité}
+\begin{block}{Variance varie en fonction de plusieurs variables exogènes}
+Le modèle transformé sera:
+\begin{align*}
+\frac{Y_t}{\hat{\sigma}_T}=\beta_0 \frac{1}{\hat{\sigma}_t}+\beta_1 \frac{X_{1t}}{\hat{\sigma}_t}+\cdots+\beta_{K-1} \frac{X_{K-1t}}{\hat{\sigma}_t}+\frac{u_t}{\hat{\sigma}_t}
+\end{align*}
+Où 
+\begin{align*}
+\hat{\sigma}=\sqrt{\hat{\alpha}_0+\hat{\alpha}_1 Z_{1t}+\cdots+\hat{\alpha}_H Z_{Ht}}
+\end{align*}
+En estimant par OLS
+\begin{itemize}
+\item Contrairement au cas à une seule variable exogène, les estimateurs des $\beta_K$ sont obtenus par FGLS et nom par GLS, car nous avons estimé la matrice $\Omega$ à partir de variable exogène.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\section{Tests diagnostiques d'hétéroscédasticité}
+
+\frame{\tableofcontents[current]}
+
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{itemize}
+\item Nous introduisons des tests pour savoir si les régressions considérées souffrent de problème d’hétéroscédasticité des erreurs (et résidus). 
+\item Une approche intuitive serait de regarder un graphique des résidus de régression dans le but de trouver des anomalies.
+\item Une approche par analyse de graphique n’est pas un test statistique formel de la présence d’hétéroscédasticité.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test de Goldfeld-Quandt (GQ)}
+\textbf{Modèle:}
+\begin{align*}
+Y_i=\beta_0+\beta_1 X_{1i}+\cdots+\beta_{K-1}X_{K-1i}+u_i
+\end{align*}
+\begin{itemize}
+\item On teste l’hypothèse nulle d’une variance constante dans le temps contre l’alternative que la variance augmente de manière monotone selon un exogène $Z_{1i}$.
+\item Hypothèse nulle:
+\begin{align*}
+H_0: \sigma_i^2 = \sigma^2 \forall i
+\end{align*}
+\item Hypothèse alternative:
+\begin{align*}
+H_A: \sigma_i^2 \hspace{0.2cm} \textbf{augmente de manière monotone selon} \hspace{0.2cm} Z_{1i}
+\end{align*}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test de Goldfeld-Quandt (GQ)}
+\textbf{Marche à suivre:}
+\begin{enumerate}
+\item Ordonner les observations selon la variable Z.
+\item Omettre c observation centrale
+\item Effectuer deux régressions séparées sur les $\frac{N-c}{2}$ premières et les $\frac{N-c}{2}$ dernières observations et calculer $\hat{\sigma}_1^2$ et $\hat{\sigma}_2^2$
+\item La statistique de test est:
+\begin{align*}
+GQ = \frac{\hat{\sigma}_2^2}{\hat{\sigma}_1^2} \sim F \left( \frac{N-c-2K}{2}, \frac{N-c-2K}{2}\right)
+\end{align*}
+\end{enumerate}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test de Goldfeld-Quandt (GQ)}
+\begin{itemize}
+\item les estimateurs de $\hat{\sigma}_1^2$ et de $\hat{\sigma}_2^2$ sont calculés à partir des deux régressions en sous-groupe. 
+\item Le nombre d’observations sera $\frac{N-c}{•2}$ et le nombre de degrés de liberté sera $\frac{N-c}{2-k}$.
+\item Ceci est équivalent à $$\frac{N-c-2K}{2}$ qui représente les degrés de liberté du numérateur et du dénominateur de la statistique.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test de Goldfeld-Quandt (GQ)}
+\begin{itemize}
+\item Le test est exact et non asymptotique.
+\item On perd les observations du centre, car on veut voir ce qui se passe aux extrémités. 
+\item Si les erreurs sont normales, le test suit exactement une loi F et non asymptotiquement. 
+\item On n’a donc pas besoin d’une grande taille d’échantillon pour ce test.
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test de Breusch-Pagan (BP)}
+\begin{itemize}
+\item Le test est plus général que le précédent et plus utilisé
+\item En présence d'exogènes:
+\begin{align*}
+Y_t=\beta_0+\beta_1 X_{1t}+ \cdots+\beta_{K-1} X_{K-1t}+u_t
+\end{align*}
+\begin{align*}
+\sigma_t^2=\alpha_0+\alpha_1 Z_{1t}+\cdots+\alpha_H Z_{Ht}+\epsilon_t
+\end{align*}
+\begin{align*}
+H_0: \alpha_1=\cdots=\alpha_H=0 \forall h
+\end{align*}
+\begin{align*}
+H_A: \exists \alpha_h \neq 0
+\end{align*}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test de Breusch-Pagan (BP)}
+\begin{itemize}
+\item Le test est basé sur une régression artificielle suivante :
+
+\begin{align*}
+u_t^2=\hat{\alpha_0}+\hat{\alpha_1} Z_{1t}+\cdots+\hat{\alpha_H} Z_{Ht}
+\end{align*}
+\item Le test porte sur tous les coefficients de la régression, sauf la constante. 
+\item Il est donc naturel qu’il soit basé sur le R2 de la régression artificielle.
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test de Breusch-Pagan (BP)}
+\textbf{Statistique de test:}
+\begin{align*}
+BP=T \times R_{reg artificielle}^2 
+\end{align*}
+\begin{align*}
+BP^{asy} \sim X^{2}(H)
+\end{align*}
+\begin{itemize}
+\item Le $R^2$ de la régression artificielle sera petit, mais cela ne veut pas dire qu’il n’y a pas d’hétéroscédasticité, car le test est basé sur $(T \times R^2)$.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test d’effet ARCH sur les résidus de régression.}
+\begin{itemize}
+\item \textbf{ARCH:} autoregressive conditionnal heteroscedasticity
+\item On veut tester l’hypothèse de \textbf{volatility clostering}, la variabilité d'aujourd’hui est reliée à la variabilité d'hier.
+
+\begin{align*}
+u_t = \epsilon_t \sqrt{\alpha_0+\alpha_1 u_{t-1}^2}
+\end{align*}
+Sachant
+\begin{align*}
+\epsilon_t \sim N(0,1)
+\end{align*}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test d’effet ARCH sur les résidus de régression.}
+\begin{itemize}
+\item \textbf{Variance conditionnelle au passé:}
+\begin{align*}
+E(u_t^2 \mid u_{t-1})=\alpha_0+\alpha_1 u_{t-1}^2
+\end{align*}
+\item La variance conditionnelle au passé est hétéroscédastique (varie dans le temps ici)
+\item $V(u_t)$ (la variance inconditionnelle) est invariante dans le temps si $\mid \alpha_1 \mid < 1$
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test d’effet ARCH sur les résidus de régression.}
+\begin{itemize}
+\item \textbf{Variance inconditionnelle:}
+\begin{align*}
+E(u_t^2) = E(\epsilon_t^2) \times E(\alpha_0+\alpha_1 u_{t-1}^2)+cov(\epsilon_t,u_{t-1})
+\end{align*}
+\begin{align*}
+V(u_t)=V(u)= \frac{\alpha_0}{1-\alpha_1}
+\end{align*}
+\item Pour évaluer cette hypothèse, on peut appliquer un test de Breusch-Pagan basé sur une régression artificielle des $\hat{u}_t^2$sur une constante et $\hat{u}_{t-1}^2$
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test de White}
+\begin{itemize}
+\item Ce test s’applique pour tester l’hétéroscédasticité de forme générale.
+\item On ne spécifie pas de forme pour la variance.
+\item L’hypothèse nulle est que la variance est homoscédastique contre une alternative hétéroscédastique générale.
+\end{itemize}
+Soit le modèle:
+\begin{align*}
+Y_t=\beta_0+\beta_1 X_{1t}+\beta_2 X_{2t}+u_t
+\end{align*}
+Le test est basé sur une régression artificielle:
+\begin{align*}
+\hat{u}_t^2=\alpha_0+\alpha_1 X_{1t}+\alpha_{11} X_{1t}^2+\alpha_2 X_{2t}+\alpha_{22} X_{2t}^2+\alpha_{12} X_{1t}X_{2t}+\epsilon_t
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Test de White}
+\textbf{Statistique de test:}
+\begin{align*}
+WHITE = T \times R_{reg.art}^2
+\end{align*}
+\begin{align*}
+WHITE^{asy} \sim X^2(H)
+\end{align*}
+\begin{itemize}
+\item L’avantage du test de White est qu’il est très général.
+\item Par contre, on perd des degrés de liberté de la régression artificielle, car on doit estimer les produits croisés et les régresseurs au carré.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Le Correction de White}
+\begin{itemize}
+\item Lorsque q’on ne peut spécifier une forme paramétrique pour la variance hétéroscédastique des erreurs, on ne peut pas utiliser les estimateurs GLS et FGLS définis plus haut. 
+\item Une approche alternative est d’utiliser l’estimateur de $\hat{\beta}_{OLS}$ , mais de corriger l’estimateur de sa variance pour tenir compte de l’hétéroscédasticité. 
+\item On se souvient que $\hat{\beta}_{OLS}$ était toujours sans biais pour les cas hétéroscédastiques, mais que sa variance était fausse. On trouve donc une correction pour la variance des OLS.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Estimateur de la variance suggéré}
+\begin{align*}
+\hat{V}(\hat{\beta}_{OLS})=T(X'X)^{-1} \hat{\Lambda} (X'X)^{-1}
+\end{align*}
+Où
+\begin{align*}
+\hat{\Lambda}=\frac{1}{T} \sum_{t=1}^T \hat{u}_t^2 (x_t'x_t)
+\end{align*}
+Où $x_t$ est la $t^{ième}$ ligne de la matrice X. Cet estimateur est difficile à visualiser. 
+\begin{align*}
+Var(\hat{\beta}_j)=\frac{\sum \hat{w}_{ji}^2\hat{u}_i^2}{(\sum \hat{w}_{ji}^2)^2}
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Tests diagnostiques d'hétéroscédasticité}
+\begin{block}{Estimateur de la variance suggéré}
+\begin{itemize}
+\item Les $\hat{u}_i$ sont les résidus de la régression originale et les $\hat{w}_j$ sont les résidus obtenus d'une régression auxiliaire du régresseur j sur tous les autres.
+\item Le correcteur de White est donc une approximation de la variance qui pondère les observations des résidus en fonction des régresseurs dans le calcul de la variance. 
+\item En général, si on a des indices sur la structure de la matrice $\Omega$, il est préférable de passer par l’estimateur FGLS si la qualité de l’information ajoutée est bonne. 
+\item Le correcteur de White est très utile lorsqu’on n’a aucune idée de la forme fonctionnelle à donner à $\Omega$. 
+\end{itemize}
+\end{block}
+\end{frame}
+\end{document}

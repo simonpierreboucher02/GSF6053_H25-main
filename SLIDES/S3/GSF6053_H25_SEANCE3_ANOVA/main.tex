@@ -1,0 +1,926 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usetheme{default}
+\usecolortheme{seagull}
+
+\title[S02 Régression et MCO]{Analyse de Variance et Tests d'hypothèses\\ (Séance 3)}
+\subtitle{GSF-6053: Économétrie Financière}
+\author[SP. Boucher]{Simon-Pierre Boucher\inst{1}}
+\institute[Université Laval]
+{
+  \inst{1}%
+  Département de finance, assurance et immobilier\\
+  Faculté des sciences de l'administration\\
+  Université Laval}
+\date[Hiver 2025]{28 Janvier 2025}
+
+% Configuration du pied de page avec logo en bas à droite
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.7\paperwidth,ht=2ex,dp=1ex,left]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.3\paperwidth,ht=2ex,dp=1ex,right]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{0.5em}
+      \insertframenumber{} / \inserttotalframenumber\hspace*{0.5em}
+      \raisebox{0.2cm}{\includegraphics[height=0.6cm]{logo_universite_laval.png}} % Ajustement du logo
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamertemplate{navigation symbols}{} % Supprime les symboles de navigation par défaut
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+
+\begin{frame}{Références}
+\textbf{Obligatoires:}
+\begin{itemize}
+
+\item \textbf{Woolridge:} chapitres 2 à 7
+\end{itemize}
+\vspace{0.5cm}
+\textbf{Complémentaires:}
+\begin{itemize}
+\item \textbf{Gujarati et Porter:} chapitres 1 à 9.
+\item \textbf{Greene:} chapitres 2, 3, 4, 5, 9, 14, 20, appendices C et D
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Plan de la séance}
+  \tableofcontents
+\end{frame}
+
+\section{Analyse de Variance}
+
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Analyse de Variance}
+\begin{itemize}
+\item Variation dans la variable expliquée \textbf{(Y)}
+\begin{align*}
+Y_t=\hat{Y}_t+\hat{u}_t
+\end{align*}
+\item Composantes de la variation de \textbf{Y}
+\begin{itemize}
+\item $\hat{Y}_t$ est la variation due à la partie expliquée
+\item $\hat{u}_t$ est induite par la partie de \textbf{Y} non expliquée
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Analyse de Variance}
+\begin{itemize}
+\item Variation totale de \textbf{Y}
+\begin{align*}
+SS_{tot}=\sum_{t=1}^{T}(Y_t-\overline{Y})^2
+\end{align*}
+\item Variation partie expliquée de \textbf{Y}
+\begin{align*}
+SS_{reg}=\sum_{t=1}^{T}(\hat{Y}_t-\overline{Y})^2
+\end{align*}
+\item Variation non expliquée de \textbf{Y} ou Résidus
+\begin{align*}
+SS_{err}=\sum_{t=1}^{T}(Y_t-\hat{Y}_t)^2=\sum_{t=1}^{T} \hat{u}_t^2
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Analyse de Variance}
+\begin{itemize}
+\item À l'aide des 3 dernières définitions, soit $SS_{tot}, SS_{reg}$ et $SS_{err}$, nous allons maintenant prouver l'équation suivante:
+\begin{align*}
+SS_{tot}=SS_{reg}+SS_{err}
+\end{align*}
+\item On pose la définition de $SS_{tot}$ qu'on sait déja:
+\begin{align*}
+SS_{tot}=\sum_{t=1}^{T}(Y_t-\overline{Y})^2
+\end{align*}
+Sachant $Y_t= \hat{Y}_t + \hat{u}_t$
+
+\begin{align*}
+SS_{tot}=\sum_{t=1}^{T}(\hat{Y}_t + \hat{u}_t-\overline{Y})^2
+\end{align*}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Analyse de Variance}
+\begin{itemize}
+\item Afin d'éliminer et de transformer certains termes, il nous faut distribuer les termes de notre parenthèse élevé au carré.
+\begin{align*}
+SS_{tot}  =\sum_{t=1}^{T}(\hat{Y}_t + \hat{u}_t-\overline{Y})\times(\hat{Y}_t + \hat{u}_t-\overline{Y})
+\end{align*}
+
+\begin{align*}
+=\sum_{t=1}^{T} \left[ \hat{Y}_t^2 +\hat{Y}_t\hat{u}_t -\hat{Y}_t\overline{Y} +\hat{u}_t\hat{Y}_t + \hat{u}_t^2-\hat{u}_t \overline{Y}  - \overline{Y} \hat{Y}_t -\overline{Y} \hat{u}_t +\overline{Y}^2 \right]
+\end{align*}
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Analyse de Variance}
+\begin{itemize}
+\item Nous allons maintenant simplifier notre équation $SS_{tot}$, en utilisant l'identité remarquable. 
+\begin{itemize}
+\item Rappel: Si nous avons $(a^2+2ab+b^2)$, alors on peut écrire les 3 termes sous une forme polynomial $(a+b)^2$
+\end{itemize}
+\item Dans le cas qui nous interesse, notre indentité remarquable sera composé de $\hat{Y}_t$ et $\overline{Y}$. On peut donc isoler, dans notre dernière équation les termes nécessaires:
+\begin{align*}
+SS_{tot} =\sum_{t=1}^{T} \left[(\hat{Y}_t^2+\overline{Y}^2-2\hat{Y}_t \overline{Y})+2\hat{Y}_t\hat{u}_t + \hat{u}_t^2-2 \hat{u}_t \overline{Y}]
+\end{align*}
+Sachant que selon l'identité remarquable $(\hat{Y}_t^2+\overline{Y}^2-2\hat{Y}_t \overline{Y})=(\hat{Y}_t-\overline{Y})^2$
+\begin{align*}
+SS_{tot} =\sum_{t=1}^{T} \left[(\hat{Y}_t-\overline{Y})^2+2\hat{Y}_t\hat{u}_t + \hat{u}_t^2-2 \hat{u}_t \overline{Y}]
+\end{align*}
+\end{itemize}
+
+ \end{frame}
+
+
+\begin{frame}{Analyse de Variance}
+\begin{itemize}
+\item On doit maintenant distribuer notre opérateur sommation à tous les termes de l'équation exprimant $SS_{tot}$.
+\begin{align*}
+SS_{tot}=\sum_{t=1}^{T} (\hat{Y}_t-\overline{Y})^2 + \sum_{t=1}^{T} \hat{u}_t^2 +2\sum_{t=1}^{T}\hat{Y}_t\hat{u}_t  -2 \overline{Y}\sum_{t=1}^{T}\hat{u}_t
+\end{align*}
+Sachant:
+\begin{itemize}
+\item $SS_{reg}=\sum_{t=1}^{T}(\hat{Y}_t-\overline{Y})^2$
+\item $SS_{err}=\sum_{t=1}^{T} \hat{u}_t^2$
+\end{itemize}
+\item Alors on peut écrire l'équation exprimant $SS_{tot}$ comme suit:
+\begin{align*}
+SS_{tot}=SS_{reg} + SS_{err} +2\sum_{t=1}^{T}\hat{Y}_t\hat{u}_t  -2 \overline{Y}\sum_{t=1}^{T}\hat{u}_t
+\end{align*}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Analyse de Variance}
+\begin{itemize}
+\item Les résidus sont orthogonaux au sous-espace engendré par les colonnes de $X$ 
+\begin{align*}
+2\sum_{t=1}^T \hat{Y}_t \hat{u}_t=0
+\end{align*}
+\item La somme des résidus est nulle
+\begin{align*}
+2 \overline{Y} \sum_{t=1}^T \hat{u}_t=0
+\end{align*}
+\item Avec les deux dernières propriétés on très bien que dans l'éuation du $SS_{tot}$, les deux derniers termes s’annulent:
+\begin{align*}
+SS_{tot}=SS_{reg}+SS_{err}
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\section{Coefficient de détermination $(R^2)$}
+
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Coefficient de détermination $(R^2)$}
+\begin{itemize}
+\item Indique le pouvoir explicatif de la régression
+\item Proportion des variations de $Y$ expliquées par les régresseurs du modèle par rapport aux variations total.
+\item On peut donc exprimer le $R^2$ comme étant le ratio entre la somme des résidus au carrés et somme des variations total au carrés. 
+\begin{align*}
+R^2=\frac{SS_{reg}}{SS_{tot}}=1-\frac{SS_{err}}{SS_{tot}}
+\end{align*}
+\item On voit clairement que notre $R^2$ sera compris entre $0$ et $1$
+\begin{align*}
+0 \le R^2 \le 1
+\end{align*}
+\end{itemize}
+\end{frame}
+
+
+\section{Coefficient de détermination ajusté $(R^2$ ajusté)}
+
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Coefficient de détermination ajusté $(R^2$ ajusté)}
+\begin{itemize}
+\item Contrairement au $R^2$ standard, le $R^2$ ajusté vient pénélisé l'ajout de variables explicatives inutiles.
+\item $R^2$ $\rightarrow$ Si on ajoute un variable explicative à note modèle, il augmentera forcément
+\item $R^2$ ajusté $\rightarrow$ Si on ajoute un variable explicative à note modèle, il peut augmenté, mais si l'ajout de cette variable est inutile il pourra également diminuer.
+
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Coefficient de détermination ajusté $(R^2$ ajusté)}
+\begin{itemize}
+\item L'équation exprimant le $R^2$ ajusté contient comme pour le $R^2$, le $SS_{err}$ et le $SS_{tot}$. 
+\item Cependant afin de tenir compte du nombre de régresseurs ajoutés au modèle, on aura besoin de la constante $k$, étant le nombre de variable indépendantes. 
+\item Nous aurons également besoin du nombres d'observation dans notre échantillons, représenté par $n$.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Coefficient de détermination ajusté $(R^2$ ajusté)}
+\begin{itemize}
+\item \textbf{Équation exprimation le $R^2$ ajusté:}
+\begin{align*}
+R_{ADJ}^2 & =1-\frac{\left( \frac{SS_{err}}{n-k}\right)}{\left( \frac{SS_{tot}}{n-1}\right)} \\ & = 1-\frac{SS_{err}(n-1)}{SS_{tot}(n-k)}
+\end{align*}
+Ou \textbf{k} représente le nombre de régresseurs
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Coefficient de détermination ajusté $(R^2$ ajusté)}
+\begin{itemize}
+\item On peut également montrer qu'il est possible d'exprimer le $R^2$ ajusté en fonction du $R^2$ standard
+\item Si $\frac{SS_{reg}}{SS_{tot}}=R^2$ alors $\frac{SS_{err}}{SS_{tot}}=1-R^2$
+Comme montré ci-haut, le $R^2$ ajusté peut être exprimé comme suit:
+\begin{align*}
+R_{ADJ}^2=1-\frac{SS_{err}}{SS_{tot}} \times \frac{(n-1)}{n-k}
+\end{align*}
+Sachant $\frac{SS_{err}}{SS_{tot}}=1-R^2$, on peut écrire à nouveau le $R^2$ ajusté en fonction du $R^2$
+\begin{align*}
+R_{ADJ}^2=1-(1-R^2) \times \frac{(n-1)}{n-k}
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Coefficient de détermination ajusté $(R^2$ ajusté)}
+\textbf{Coefficient de détermination ajusté:}
+
+\begin{itemize}
+\item Si nous avons uniquement 1 variables explicatives dans notre modèle, alors le $R^2$ sera égale au $R_{ADJ}^2$.
+\begin{itemize}
+\item Dans ce cas, nous avons 1 régresseur, soit $k=1$
+\end{itemize}
+\begin{align*}
+R_{ADJ}^2 & =1-(1-R^2) \times \frac{(n-1)}{n-k} \\ & = 1-(1-R^2) \times \frac{(n-1)}{n-1} \\ & =1-(1-R^2) \\ & = R^2
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Coefficient de détermination ajusté $(R^2$ ajusté)}
+\textbf{Coefficient de détermination ajusté:}
+
+\begin{itemize}
+\item Si nous avons uniquement plusieurs variables explicatives dans notre modèle, alors le $R^2$ sera plus grand ou égale au $R_{ADJ}^2$.
+\begin{itemize}
+\item Dans ce cas, nous avons 2 régresseur et plus, soit $k \ge 2$
+\end{itemize}
+\item S'il y a plusieurs variables explicatives alors
+\begin{align*}
+n-1 > n-k
+\end{align*}
+De facon équivalente:
+\begin{align*}
+\frac{(n-1)}{n-k} > 1
+\end{align*}
+\item Le terme $\frac{(n-1)}{n-k}$ supérieurs à 1  est multiplié à ce qui n'est pas expliqué par le modèle $(1-R^2)$
+\end{itemize}
+\textbf{Ce qui nous permet d'affirmer:}
+\begin{align*}
+R_{ADJ}^2 \leq R^2 \hspace{0.2cm} \textbf{et} \hspace{0.2cm} R_{ADJ}^2 \leq 1
+\end{align*}
+\end{frame}
+
+
+
+\section{Test d'hypothèse}
+
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Test d'hypothèse}
+\textbf{Un test d’hypothèse sur les paramètres d’un modèle économétrique requiert les
+ étapes suivantes:}
+
+\begin{itemize}
+\item \textbf{Étape 1:} 
+\begin{itemize}
+\item Écrire l’hypothèse nulle ($H_0$) et l’alternative ($H_1$). 
+\item La plupart du temps, $H_0$ est l’hypothèse que l’on veut rejeter. 
+\item Par exemple, qu’un paramètre est non significatif ou égal à une certaine valeur. 
+\item L’hypothèse alternative peut être unilatérale ($<$ et $>$) ou bilatérale ($\neq$).
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Test d'hypothèse}
+
+\begin{itemize}
+\item \textbf{Étape 2:} 
+\begin{itemize}
+\item Définir la statistique de test (student, F, Wald, LR, LM etc..) 
+\item Déterminer si possible, la distribution loi de cette statistique sous $H_0$.
+\end{itemize}
+\item \textbf{Étape 3:}
+\begin{itemize}
+\item Choisir le niveau de significativité du test $\alpha$.
+\item On fixe donc la possibilité d’erreur de type 1 soit la probabilité de rejeter $H_0$ lorsque celle-ci est vraie.
+\item Généralement, on fixe le niveau à 5 \% ou 1 \% et plus rarement à 10 \%.
+
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Test d'hypothèse}
+
+\begin{itemize}
+\item \textbf{Étape 4:} 
+\begin{itemize}
+\item Déterminer la règle de décision du test avec la région critique de confiance $CR_{\alpha}$.
+\item La plupart du temps, cela demande de savoir la distribution de la statistique sous $H_0$.
+\item Lorsque la valeur calculée pour la statistique de test se trouve dans la région critique: on rejette $H_0$ en faveur de $H_1$ au seuil de confiance $\alpha$.
+\end{itemize}
+\item \textbf{Étape 5:}
+\begin{itemize}
+\item Utiliser les valeurs obtenues de la régression pour calculer la statistique de test.
+\end{itemize}
+\item \textbf{Étape 6:}
+\begin{itemize}
+\item Appliquer la règle de décision vue dans l'étape 4.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Test d'hypothèse}
+\begin{block}{Note sur la p-value}
+\begin{itemize}
+\item Parfois, on regarde la p-value au lieu de comparer $CR_{\alpha}$ à la valeur de la statistique.
+\item P-value : C’est le plus petit niveau auquel on petit rejeter l’hypothèse nulle.
+\item En d’autres mots, c’est la probabilité d’avoir un évènement aussi extrême que celle observée en assumant que $H_0$ est vraie. 
+\item Plus la p-value est faible, plus la probabilité que l’évènement observé soit faible, étant donné l’hypothèse nulle.
+\begin{itemize}
+\item plus il y a de chances que l’hypothèse nulle est rejetée.
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Test d'hypothèse}
+\textbf{Test de significativité:}
+\begin{block}{Significativité individuelle d'un paramètre}
+\begin{itemize}
+\item On regarde si le régresseur est statistiquement non nul 
+\item Utilise le test de student 
+\end{itemize}
+\end{block}
+\begin{block}{Significativité conjointe des paramètres}
+\begin{itemize}
+\item On regarde si au moins un des régresseurs est statistiquement non nul (un effet)
+\item Utilise le F-test
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+
+
+
+\begin{frame}{Test d'hypothèse}
+\textbf{Test de Student:}
+\begin{block}{Two-tailed test}
+\begin{itemize}
+\item Hypothèse nulle est la non-significativité du coefficient de régression
+\item Hypothèses:
+\begin{itemize}
+\item $H_0:$ $\beta_k=0$ $\rightarrow$ \textbf{Hypothèse nule}
+\item $H_1:$ $\beta_k \neq 0$ $\rightarrow$ \textbf{Hypothèse alternative}
+\end{itemize}
+\item Règle de décision:
+Rejeter $H_0$ si:
+\begin{align*}
+t=\frac{\mid \hat{\beta}_k-\beta_0 \mid}{SE_{\hat{\beta}_k}} > t_{n-k,\alpha/2}
+\end{align*}
+\begin{itemize}
+\item Ou $\beta_0$ est la valeur du coefficient sous l'hypothèse nulle, soit 0
+\item $SE_{\hat{\beta}_k}$ est l'écart-type associé à l'estimation de $\hat{\beta}_k$
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Test d'hypothèse}
+\textbf{Test de Student:}
+\begin{block}{Right-tailed test}
+\begin{itemize}
+\item Hypothèses:
+\begin{itemize}
+\item $H_0:$ $\beta_k \leq 0$ $\rightarrow$ \textbf{Hypothèse nule}
+\item $H_1:$ $\beta_k > 0$ $\rightarrow$ \textbf{Hypothèse alternative}
+\end{itemize}
+\item Règle de décision:
+Rejeter $H_0$ si:
+\begin{align*}
+t=\frac{\hat{\beta}_k-\beta_0}{SE_{\hat{\beta}_k}} > t_{n-k,\alpha}
+\end{align*}
+\begin{itemize}
+\item Ou $\beta_0$ est la valeur du coefficient sous l'hypothèse nulle, soit 0
+\item $SE_{\hat{\beta}_k}$ est l'écart-type associé à l'estimation de $\hat{\beta}_k$
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Test d'hypothèse}
+\textbf{Test de Student:}
+\begin{block}{Left-tailed test}
+\begin{itemize}
+\item Hypothèses:
+\begin{itemize}
+\item $H_0:$ $\beta_k \geq 0$ $\rightarrow$ \textbf{Hypothèse nule}
+\item $H_1:$ $\beta_k < 0$ $\rightarrow$ \textbf{Hypothèse alternative}
+\end{itemize}
+\item Règle de décision:
+Rejeter $H_0$ si:
+\begin{align*}
+t=\frac{\hat{\beta}_k-\beta_0}{SE_{\hat{\beta}_k}} < -t_{n-k,\alpha}
+\end{align*}
+\begin{itemize}
+\item Ou $\beta_0$ est la valeur du coefficient sous l'hypothèse nulle, soit 0
+\item $SE_{\hat{\beta}_k}$ est l'écart-type associé à l'estimation de $\hat{\beta}_k$
+\end{itemize}
+\end{itemize}
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Test d'hypothèse}
+\textbf{F-test (significativité conjointe)}
+\begin{itemize}
+\item Comparer la différence entre les résidus au carrés d'un modèle contraint et d'un modèle non contraint.
+\begin{itemize}
+\item Si la différence est grande 
+\item Plus les résidus du modèle contraint sont grand par rapport au modèle contraint
+\item Plus la contrainte coûte cher à appliquer en terme de performance
+\item Plus la statistique F est grande
+\item Passé un certain coût critique $\rightarrow$ rejette $H_0$
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Test d'hypothèse}
+\textbf{F-test (significativité conjointe)}
+\begin{block}{Hypothèses:}
+\begin{itemize}
+\item $H_0:$ $\beta_2 = \beta_3 = ... = \beta_k=0$
+\item $H_1:$ $\beta_2 \neq 0$ et $\beta_3 \neq 0$ et $...$ et/ou $\beta_k \neq 0$
+\end{itemize}
+\end{block}
+\begin{block}{Statistique de test:}
+\begin{itemize}
+\item Modèle non contraint $\rightarrow$ $(\hat{u}'\hat{u})$
+\item Modèle contraint $\rightarrow$ $(\hat{u}_0'\hat{u}_0)$
+\end{itemize}
+\begin{align*}
+F = \frac{\hat{u}_0'\hat{u}_0-\hat{u}'\hat{u}}{\hat{u}'\hat{u}}\times \frac{t-k}{q} \sim (q,t-k)
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Test d'hypothèse}
+\textbf{F-test (significativité conjointe)}
+
+\begin{block}{Décision:}
+On rejette $H_0$ à un seuil de $\alpha$ si 
+\begin{align*}
+F = \frac{\hat{u}_0'\hat{u}_0-\hat{u}'\hat{u}}{\hat{u}'\hat{u}} \times \frac{t-k}{q} > F(q,t-k;\alpha)
+\end{align*}
+\end{block}
+\end{frame}
+
+
+\section{Les contraintes linéaires}
+
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Les contraintes linéaires}
+
+\textbf{Format général:}
+\begin{align*}
+H_0: R \beta = r
+\end{align*}
+\begin{itemize}
+\item $R=$ matrice de sélection contenant une ligne pour chaque contrainte non redondante $q$
+\item Vecteur de réel constants
+\end{itemize}
+
+
+\end{frame}
+
+\begin{frame}{Les contraintes linéaires}
+\begin{itemize}
+\item On cherche à maximiser notre log-vraisemblance afin de trouver une solution pour $\beta$, tout en respectant une contrainte linéaire. 
+\item Il s'agit essentiellement d'une optimization sous contrainte à l'aide d'un multiplicateur de lagrange.
+\item On représente l'estimateur $\beta$ obtenus avec la méthode des moindres carrés ordinaire est représenté par $\beta^{OLS}$.
+\item L'estimateur $\beta$ obtenus sous une contrainte linéaire est représenté par $\beta^{LC}$
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Les contraintes linéaires}
+\begin{itemize}
+\item Nous voulons minimiser la somme des carrés des résidus, mais cette fois, nous posons la contrainte : $R \beta = r$
+\item Cela conduit à la fonction de Lagrange suivante:
+\begin{align*}
+L(\beta,\lambda) & =(Y-X\beta)'(Y-X\beta)+2 \lambda'(R \beta-r)\\ & = Y'Y-2Y'X\beta +\beta' X'X \beta +2 \lambda' R\beta -2 \lambda'r
+\end{align*}
+\item On dérive ensuite la fonction $L(\beta,\lambda)$ par rapport à $\beta$ et $\lambda$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Les contraintes linéaires}
+    \begin{itemize}
+        \item \textbf{Dérivé par rapport à $\beta$}
+        \begin{align*}
+            \frac{\partial L(\beta, \lambda)}{\partial \beta} &= -2 X'Y + 2X'X \beta + 2 \lambda'R = 0
+        \end{align*}
+        \begin{align*}
+            X'X \beta + R'\lambda &= X'Y
+        \end{align*}
+
+        \item \textbf{Dérivé par rapport à $\lambda$}
+        \begin{align*}
+            \frac{\partial L(\beta, \lambda)}{\partial \lambda} &= 2R\beta - 2r = 0
+        \end{align*}
+        \begin{align*}
+            R \beta &= r
+        \end{align*}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Les contraintes linéaires}
+\textbf{Format matricielle}
+\begin{itemize}
+\item Équation 1:
+\begin{align*}
+X'X \times \textcolor{red}{\beta} + R' \times \textcolor{red}{\lambda} = X'Y
+\end{align*}
+\item Équation 2:
+\begin{align*}
+R \times \textcolor{red}{\beta} + 0 \times \textcolor{red}{\lambda} = r
+\end{align*}
+\end{itemize}
+Ce qui nous permet d'obtenir la représentation suivante:
+\begin{align*}
+\begin{bmatrix}
+X'X & R' \\
+R & 0 
+\end{bmatrix}
+\begin{bmatrix}
+\textcolor{red}{\beta} \\
+\textcolor{red}{\lambda}
+\end{bmatrix}
+=
+\begin{bmatrix}
+X'Y \\
+r
+\end{bmatrix}
+\end{align*}
+\end{frame}
+
+
+\begin{frame}{Les contraintes linéaires}
+
+\begin{itemize}
+\item On peut ensuite obtenir une solution pour $\beta$ et $\lambda$
+
+\begin{align*}
+\begin{bmatrix}
+\textcolor{red}{\beta} \\
+\textcolor{red}{\lambda}
+\end{bmatrix}
+=
+\begin{bmatrix}
+X'X & R' \\
+R & 0 
+\end{bmatrix}^{-1}
+\begin{bmatrix}
+X'Y \\
+r
+\end{bmatrix}
+\end{align*}
+
+\item Pour obtenir une solution de $\beta^{LC}$, il nous suffit de trouver la solution pour $\beta$ dans l'équation 1.
+\begin{align*}
+X'X  \beta^{LC} + R' \lambda = X'Y
+\end{align*}
+\begin{align*}
+X'X  \beta^{LC}  = X'Y-R' \lambda
+\end{align*}
+\begin{align*}
+\beta^{LC}  = (X'X)^{-1}X'Y-(X'X)^{-1}R' \lambda
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Les contraintes linéaires}
+\begin{block}{Estimateur sous contrainte linéaire ($\beta^{LC})$}
+\begin{align*}
+\beta^{LC}  = (X'X)^{-1}X'Y-(X'X)^{-1}R' \lambda
+\end{align*}
+\end{block}
+\begin{block}{Estimateur OLS ($\beta^{OLS}$)}
+\begin{align*}
+\beta^{OLS}  = (X'X)^{-1}X'Y
+\end{align*}
+\end{block}
+On voit donc facilement qu'il nous est possible d'exprimer l'estimateur $\beta^{LC}$ en fonction de l'estimateur $\beta^{OLS}$
+\begin{align*}
+\beta^{LC}  = \beta^{OLS}-(X'X)^{-1}R' \lambda
+\end{align*}
+\end{frame}
+
+\begin{frame}{Les contraintes linéaires}
+\begin{itemize}
+\item On doit également trouver une solution pour $\lambda$ afin de pouvoir l'incorporer dans la solution de $\beta^{LC}$
+\item On commence par multiplier chaque coté l'équation de la solution de $\beta^{LC}$ par $R$
+\begin{align*}
+R\beta^{LC}  = R\beta^{OLS}-R(X'X)^{-1}R' \lambda
+\end{align*}
+\item On sait déja que $R\beta^{LC}=r$, étant donné la contrainte linéaire posée
+\begin{align*}
+r  = R\beta^{OLS}-R(X'X)^{-1}R' \lambda
+\end{align*}
+\item Pour finalement isoler $\beta^{OLS}$
+\begin{align*}
+\lambda=(R(X'X)^{-1}R')^{-1}(R\beta^{OLS}-r)
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Les contraintes linéaires}
+\begin{itemize}
+\item On substitut la solution de $\lambda$ dans l'équation de la solution de $\beta^{LC}$
+\begin{align*}
+\beta^{LC}  = \beta^{OLS}-(X'X)^{-1}R'(R(X'X)^{-1}R')^{-1}(R\beta^{OLS}-r)
+\end{align*}
+\item On voit que $\beta^{LC}$ (Contraint) est exprimé en fonction de $\beta^{OLS}$ (Non-Contraint).
+\item Le test de Fisher (F-Test) est une spécification d'un contrainte linéaire.
+\begin{itemize}
+\item Le modèle non-contraint est le modèle que nous souhaitons estimer et vérifier la significativité.
+\item Le modèle contraint est simplement un modèle dans lequel nous allons contraindre tous les coefficients d'être égale à 0.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Les contraintes linéaires}
+\begin{block}{Représentation du F-test sous le format de contrainte linéaire}
+\begin{itemize}
+\item On suppose un modèle avec un intercept $\beta_0$ et une pente $\beta_1$.
+\item On cherche à tester une contrainte linéaire ayant le format $R\beta=r$
+\item La matrice $R$:
+\begin{align*}
+R = \begin{bmatrix}
+1 & 0 \\
+0 & 1 
+\end{bmatrix}
+\end{align*}
+\item La matrice $\beta$:
+\begin{align*}
+\beta= \begin{bmatrix}
+\beta_0 \\
+\beta_1
+\end{bmatrix}
+\end{align*}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Les contraintes linéaires}
+\begin{block}{Représentation du F-test sous le format de contrainte linéaire}
+\begin{itemize}
+\item La matrice $r$
+\begin{align*}
+r= \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{align*}
+\item Ce qui nous donne la contrainte linéaire $(R \beta=r)$ dans le cas du F-Test:
+\begin{align*}
+\begin{bmatrix}
+1 & 0 \\
+0 & 1 
+\end{bmatrix}
+\begin{bmatrix}
+\beta_0 \\
+\beta_1
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{align*}
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Les contraintes linéaires}
+\begin{itemize}
+\item Nous regardons maintenant trois classes de tests qui peuvent être utilisées dans des contextes plus généraux:
+\begin{itemize}
+\item Test d’hypothèse de restrictions non linéaires sur les paramètres
+\item Test d’hypothèse sur la matrice de variance-covariance
+\item Tests dans des modèles sans normalités des erreurs
+\end{itemize}
+\item Les tests présentés sont
+\begin{itemize}
+\item Multiplicateur de Lagrange (LM)
+\item Test de Wald 
+\item Ratio de vraisemblance (LR)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Test de Wald}
+
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Test de Wald}
+\begin{itemize}
+\item Le test de Wald est une forme quadratique basé sur la distance entre $(R \beta -r)$ et zéro.
+\item C’est-à-dire si l’estimé non contraint vérifie la contrainte.
+\item On rejette l’hypothèse nulle si la statistique est suffisamment grande.
+\begin{block}{Hypothèses}
+\begin{itemize}
+\item $H_0:$ $R \beta = r$
+\item $H_1:$ $R \beta \neq r$
+\end{itemize}
+\end{block}
+\begin{block}{Statistique $W$}
+\begin{align*}
+W=(R \beta -r)'[V(R \beta -r)]^{-1}(R \beta-r)
+\end{align*}
+Où $V(R \beta -r)$ est la variance entre les deux termes.
+\end{block}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Test de Wald}
+\begin{block}{Statistique $W$}
+\begin{itemize}
+\item En décomposant la variance, on trouve une solution pour la statistique de Wald.
+\begin{align*}
+W = \frac{1}{\hat{\sigma}^2}(R \beta -r)'[R(X'X)^{-1}R']^{-1}(R \beta -r)
+\end{align*}
+\end{itemize}
+\end{block}
+\begin{itemize}
+\item Sous l’hypothèse nulle, W suit aussi une khi carré (q).
+\item Le Wald est intéressant, car tous les estimés nécessaires sont non contraints.
+\item On ne fait pas d’estimation contrainte, car on s’intéresse à savoir si le modèle non contraint rejette l’hypothèse nulle d’être « assez prêt » de la contrainte.
+\end{itemize}
+\end{frame}
+
+\section{Ratio de vraisemblance (LR)}
+
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Ratio de vraisemblance (LR)}
+\begin{itemize}
+\item \textbf{Intuition:} comparer la valeur de la vraisemblance aux maximum contraint et non contraint.
+\item Si ces deux valeurs sont proches l’une de l’autre, cela implique que la contrainte est aisément satisfaite par les observations et non couteuse en termes de maximisation de la vraisemblance.
+\item La vraissemblance du modèle non-contraint est représenté par $\hat{L}$, alors que la vraissemblance du modèle contraint est représenté par $\hat{L}_c$
+\item L'estimateur $\hat{L}$ sera une fonction des estimateurs $\hat{\beta}$ et $\hat{\sigma}^2$ du modèle non contraint $\rightarrow$ $\hat{L}(\hat{\beta},\hat{\sigma}^2)$
+\item L'estimateur $\hat{L}_c$ sera une fonction des estimateurs $\hat{\beta}_c$ et $\hat{\sigma}_c^2$ du modèle non contraint $\rightarrow$ $\hat{L}_c(\hat{\beta}_c,\hat{\sigma}_c^2)$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ratio de vraisemblance (LR)}
+\begin{itemize}
+\item Afin de pouvoir simplifier la vraissemblance, nous poserons l'hypothèse de normalité des résidus.
+\begin{align*}
+\hat{L} & =-\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\hat{\sigma}^2)-\frac{1}{2} \times \frac{(Y-X \hat{\beta})'(Y-X \hat{\beta})}{\hat{\sigma}^2} \\ & =-\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\hat{\sigma}^2)-\frac{1}{2} \times \frac{\hat{u}'\hat{u}}{\hat{\sigma}^2} \\ & = -\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\hat{\sigma}^2)-\frac{1}{2} \times \frac{T \hat{\sigma}^2}{\hat{\sigma}^2} \\ & = -\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\hat{\sigma}^2)-\frac{T}{2} 
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Ratio de vraisemblance (LR)}
+\begin{block}{Vraissemblance du modèle non-contraint}
+\begin{align*}
+\hat{L}=-\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\hat{\sigma}^2)-\frac{T}{2} 
+\end{align*}
+\end{block}
+\begin{block}{Vraissemblance du modèle contraint}
+\begin{align*}
+\hat{L}_c=-\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\hat{\sigma}_c^2)-\frac{T}{2} 
+\end{align*}
+\end{block}
+\end{frame}
+
+\begin{frame}{Ratio de vraisemblance (LR)}
+\begin{itemize}
+\item On veut comparer la valeur de la vraisemblance $\hat{L}$ et $\hat{L}_c$
+\item La statistique LR s’écrit donc comme la différence entre les estimés contraints et non-contraints de $\sigma^2$
+\begin{align*}
+LR & =2[\hat{L}-\hat{L}_c]\\ & =  2\left[ -\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\hat{\sigma}^2)-\frac{T}{2}  \right]\\ & -2\left[ -\frac{T}{2} \log (2 \pi) -\frac{T}{2} \log (\hat{\sigma}_c^2)-\frac{T}{2} \right] \\ & =T \log (\hat{\sigma}_c^2)-T \log (\hat{\sigma}^2) \\ & = T \log \left( \frac{\hat{\sigma}_c^2}{\hat{\sigma}^2}\right) = T \log \left( \frac{\hat{u}_c^{'}\hat{u}_c}{\hat{u}^{'} \hat{u}}\right) 
+\end{align*}
+\item La statistique suit donc une loi Khi carré (q) asymptotiquement
+\end{itemize}
+\end{frame}
+
+\section{Multiplicateur de Lagrange}
+
+\frame{\tableofcontents[current]}
+
+
+\begin{frame}{Multiplicateur de Lagrange}
+\begin{itemize}
+\item Il s’agit d’une régression auxiliaire.
+\item La statistique de test sera :$T \times R^2$
+\item Cette statistique suit alors une khi-carré avec q degré de liberté. 
+\item Intuition de ce test : vérifier si le score (la dérivé première du Lagrangien en fonction des paramètres) est proche de zéro évalué en $\hat{\beta}_c$.
+\item Si oui, la contrainte n’est pas très couteuse en termes d’optimisation et il est probable que les paramètres prennent les valeurs définies par l’hypothèse nulle.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Multiplicateur de Lagrange}
+\begin{block}{Statistique LM}
+\begin{align*}
+LM= \left[ \frac{\partial L}{\partial \beta} (\hat{\beta}_c)\right]^{'}\left[V \frac{\partial L}{\partial \beta} (\hat{\beta}_c)\right]^{-1}\left[ \frac{\partial L}{\partial \beta} (\hat{\beta}_c)\right]
+\end{align*}
+En effectuant les dérivés premières et quelques manipulations, on obtient la solution pour la statistique LM.
+\begin{align*}
+LM=\frac{1}{\sigma^2} (\hat{\beta}-\hat{\beta}_c)'R'CR(\hat{\beta}-\hat{\beta}_c)
+\end{align*}
+
+\end{block}
+\end{frame}
+
+\begin{frame}{Multiplicateur de Lagrange}
+\begin{block}{Statistique LM}
+\begin{itemize}
+\item On peut aussi réécrire cette statistique comme une fonction des résidus contraints et non contraints.
+\begin{align*}
+LM = \frac{\hat{u}_c^{'}\hat{u}_c-\hat{u}^{'}\hat{u}}{\frac{\hat{u}_c^{'}\hat{u}_c}{T}}
+\end{align*}
+\item Cette statistique suit une loi Chi carré avec q degré de liberté asymptotiquement sous l’hypothèse nulle.
+\item Le LM exploite le fait que la maximisation du log vraisemblance sous la contrainte de l’hypothèse nulle revient à maximiser sans contrainte la fonction Lagrangienne associée. 
+\item  Le test est alors basé sur le fait que si la contrainte sous $H_0$ est respectée par les données, le vecteur de Lagrange devrait être nul.
+
+\end{itemize}
+\end{block}
+\end{frame}
+
+\section{Lien entre les Statistiques F, WALD, LR et LM}
+
+\frame{\tableofcontents[current]}
+
+\begin{frame}{Lien entre les Statistiques F, WALD, LR et LM}
+\begin{itemize}
+\item Toutes ces statistiques se calculent à partir de la somme des résidus au carré.
+\item Il est possible d’exprimer les trois statistiques présentées comme une transformation de la statistique F dans le cas de contraintes linéaires et du modèle linéaire simple.
+\end{itemize}
+\begin{block}{Statistique F}
+
+\begin{align*}
+F= \frac{\hat{u}_0'\hat{u}_0-\hat{u}'\hat{u}}{\hat{u}'\hat{u}} \times \frac{t-k}{q}>F(q,t-k;\alpha) 
+\end{align*}
+\begin{itemize}
+\item On rejette $H_0$ si la statistique de test est plus grande que le point critique associé
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Lien entre les Statistiques F, WALD, LR et LM}
+    \begin{itemize}
+        \item \textbf{Statistique Wald}
+        \begin{align*}
+            Wald &= T \frac{\hat{u}_c'\hat{u}_c - \hat{u}'\hat{u}}{\hat{u}'\hat{u}} = \frac{Tq}{T-K}F
+        \end{align*}
+
+        \item \textbf{Statistique LR}
+        \begin{align*}
+            LR &= T \log \left[ \frac{\hat{u}_c'\hat{u}_c}{\hat{u}'\hat{u}} \right] = T \log \left[F \frac{q}{T-K} + 1 \right]
+        \end{align*}
+
+        \item \textbf{Statistique LM}
+        \begin{align*}
+            LM &= \frac{\hat{u}_c'\hat{u}_c - \hat{u}'\hat{u}}{\frac{\hat{u}_c'\hat{u}_c}{T}} = \frac{T}{\left[\frac{1}{F}\right] \left[\frac{T-K}{q}\right] + 1}
+        \end{align*}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Lien entre les Statistiques F, WALD, LR et LM}
+\begin{itemize}
+\item Rejette si la statistique de test est plus grande que le point critique d’une Chi-carré avec q degrés de liberté.
+\item Bien que toutes ses statistiques soient maintenant exprimées en fonction des résidus contraints et non contraints, elles ne donnent pas la même valeur. 
+\item L’inférence pourrait donc potentiellement être différente.
+\end{itemize}
+
+\end{frame}
+\end{document}

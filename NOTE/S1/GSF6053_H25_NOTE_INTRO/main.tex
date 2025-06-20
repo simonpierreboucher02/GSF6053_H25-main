@@ -1,0 +1,430 @@
+\documentclass[14pt]{extarticle} % Utilisation de extarticle pour supporter 14pt
+
+% ------------------------------------------------------------------------
+% Packages indispensables et recommandés
+% ------------------------------------------------------------------------
+\usepackage[utf8]{inputenc}     % Encodage des caractères
+\usepackage[T1]{fontenc}        % Encodage de la police
+\usepackage[french]{babel}      % Support de la langue française
+\usepackage{amsmath, amssymb}   % Environnement mathématique enrichi
+\usepackage{graphicx}           % Inclusion d'images
+\usepackage{hyperref}           % Liens hypertextes
+\usepackage{geometry}           % Gestion des marges
+\usepackage{titlesec}           % Personnalisation des titres
+\usepackage{setspace}           % Gestion de l'interligne
+\usepackage{xcolor}             % Gestion des couleurs
+\usepackage{lipsum}             % (optionnel) Pour générer du faux texte
+\usepackage{booktabs}           % (optionnel) Pour améliorer les tableaux
+\usepackage{fancyhdr}           % Personnalisation des en-têtes et pieds de page
+\usepackage{cleveref}           % Références intelligentes
+\usepackage{caption}            % Pour personnaliser les légendes
+
+% ------------------------------------------------------------------------
+% Configuration de la mise en page
+% ------------------------------------------------------------------------
+\geometry{
+    a4paper,
+    left=25mm,
+    right=25mm,
+    top=25mm,
+    bottom=25mm
+}
+
+% ------------------------------------------------------------------------
+% Personnalisation des sections
+% ------------------------------------------------------------------------
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+% ------------------------------------------------------------------------
+% Commande pour mettre en avant les livres en bleu
+% ------------------------------------------------------------------------
+\newcommand{\livre}[1]{\textcolor{blue}{#1}}
+
+% ------------------------------------------------------------------------
+% Configuration des hyperliens
+% ------------------------------------------------------------------------
+\hypersetup{
+    colorlinks=true,          % Les liens sont colorés
+    linkcolor=blue,           % Couleur des liens internes (TOC, références, etc.)
+    urlcolor=blue,            % Couleur des URL
+    citecolor=blue,           % Couleur des citations
+    filecolor=blue,           % Couleur des liens vers des fichiers
+    pdfborder={0 0 0},        % Pas de bordure autour des liens
+    breaklinks=true            % Permet les sauts de ligne dans les liens
+}
+
+% ------------------------------------------------------------------------
+% Configuration des en-têtes et pieds de page
+% ------------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Introduction}
+\fancyhead[R]{Hiver 2025}
+\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\includegraphics[height=1cm]{logo_universite_laval.png}} % Ajout du logo en bas à droite
+
+% ------------------------------------------------------------------------
+% Informations sur le document
+% ------------------------------------------------------------------------
+\title{\Huge Introduction au Cours d'Économétrie Financière}
+\author{GSF-6053}
+\date{Hiver 2025}
+
+% ------------------------------------------------------------------------
+% Autoriser les coupures d'équations
+% ------------------------------------------------------------------------
+\allowdisplaybreaks
+
+% ------------------------------------------------------------------------
+% Début du document
+% ------------------------------------------------------------------------
+\begin{document}
+
+\maketitle
+\tableofcontents
+\newpage
+
+% Augmenter l'interligne à 1,5
+\onehalfspacing
+
+% ------------------------------------------------------------------------
+% SECTION 1 : Introduction au Cours
+% ------------------------------------------------------------------------
+\section{Introduction au Cours}
+
+\subsection{Définition de l’Économétrie}
+
+\textit{\livre{Gujarati et Porter} (Introduction)}
+
+L’économétrie est le domaine des sciences économiques qui, en utilisant les outils mathématiques et les techniques et méthodes statistiques, vise, par l’analyse des données, à :
+
+\begin{itemize}
+    \item Comprendre les réalités économiques, identifier des relations, leur sens et les quantifier.
+    \item Tester des théories économiques.
+    \item Prévoir le futur des variables économiques et financières.
+    \item Aider à faire de l’analyse et des recommandations en matière de politiques économiques, de gestion des risques financiers, de gestion de portefeuilles et d’évaluation de rendements financiers.
+\end{itemize}
+
+Dans un contexte académique de la finance, deux objectifs reviennent souvent :
+
+\begin{itemize}
+    \item Effectuer des analyses économétriques pour trouver des récurrences statistiques, les documenter, les expliquer et ultimement les modéliser.
+    \item Tester si les implications ou les hypothèses d’un modèle théorique économique ou financier sont observées en pratique.
+\end{itemize}
+
+En finance en particulier, plusieurs champs d’intérêt sont de nature très empirique :
+
+\begin{itemize}
+    \item Tester les modèles d’évaluation d’actifs connus (modèle théorique sous-jacent et nombreuses implications pratiques).
+    \item Identifier des facteurs de risque et des « anomalies ».
+    \item Identifier des facteurs influençant la valeur d’une entreprise.
+    \item Identifier des événements qui révèlent de l’information aux investisseurs.
+    \item Mesurer l’impact de certaines variables économiques sur les rendements boursiers.
+    \item Mesurer l’impact de changements structurels sur les entreprises et les rendements boursiers.
+    \item Etc.
+\end{itemize}
+
+\subsection{Les Modèles Économétriques}
+
+\textit{\livre{Gujarati et Porter} (Introduction), \livre{Wooldridge} (chapitre 1)}
+
+L’approche économétrique ne peut pas être séparée de la théorie économique et financière. La théorie et l’intuition financières doivent guider l’économètre. Les étapes suivantes sont souvent identifiées pour une analyse économétrique :
+
+\begin{enumerate}
+    \item Élaboration d’une hypothèse ou d’une théorie économétrique.
+    \item Spécification d’un modèle mathématique correspondant.
+    \item Spécification du modèle empirique ou économétrique correspondant.
+    \item Collecte de données.
+    \item Estimation des paramètres du modèle.
+    \item Tests d’hypothèses.
+    \item Prévision.
+    \item Implications économiques et financières.
+\end{enumerate}
+
+(Voir Figure 1.4 de \livre{Gujarati et Porter}.)
+
+Les modèles économétriques contiennent des équations représentant le comportement de variables économiques et financières dérivées des modèles théoriques en économie et en finance. L’approche économétrique peut être bayésienne ou classique. Ce cours porte uniquement sur les méthodes classiques. À titre de référence, voici des définitions très succinctes :
+
+\begin{itemize}
+    \item \textbf{Approche classique (fréquentiste) :} Repose sur l’étude de la distribution d’un échantillon de données. On utilise les données pour faire de l’inférence sur un paramètre $\Theta$ décrivant une population ou une distribution de population.
+    \item \textbf{Approche bayésienne :} Les probabilités a priori, mises à jour après observation des données, deviennent des probabilités a posteriori. L’approche bayésienne se base sur le théorème de Bayes et intègre explicitement les croyances initiales (a priori).
+\end{itemize}
+
+Les deux approches ont leurs avantages et leurs inconvénients. Bien que l’approche classique demeure très utilisée, les méthodes bayésiennes (souvent plus coûteuses en calcul) ont gagné en popularité depuis les années 1990.
+
+Les modèles économétriques spécifient une relation entre :
+\begin{itemize}
+    \item une \textbf{variable dépendante} (ou variable expliquée), 
+    \item une ou plusieurs \textbf{variables explicatives}, 
+    \item et un \textbf{terme aléatoire} représentant les effets de tous les autres facteurs non pris en compte.
+\end{itemize}
+
+Des ajustements techniques sont requis pour tenir compte des erreurs de mesure dans les données (modèle théorique $\neq$ modèle empirique), ainsi que pour spécifier des lois de probabilité décrivant la partie non expliquée du modèle (modélisation du terme d’erreur). L’analyse repose largement sur des méthodes de régression et nécessite souvent des tests de spécification du modèle ou de la théorie sous-jacente.
+
+% ------------------------------------------------------------------------
+% SECTION 2 : Description des Rendements Financiers
+% ------------------------------------------------------------------------
+\section{Description des Rendements Financiers}
+
+Cette section donne une vue d’ensemble sur les données financières, en particulier les séries de rendements boursiers, qui constituent l’objet principal d’étude dans ce cours. Ces données ont des caractéristiques particulières influençant profondément l’approche économétrique.
+
+\subsection{Les Données Utilisées en Général}
+
+\textit{\livre{Gujarati et Porter} (Introduction et chapitre 1), \livre{Wooldridge} (1.3)}
+
+La plupart des données financières sont des données \textbf{observées} (par opposition à des données expérimentales ou simulées), ce qui pose de nombreux défis à l’économètre quant à l’analyse de causalité et aux biais possibles. On classe généralement les données économétriques en trois catégories :
+
+\begin{enumerate}
+    \item \textbf{Séries temporelles :} On étudie l’évolution d’une ou plusieurs séries au fil du temps.  
+    \begin{itemize}
+        \item Exemple : le modèle de \livre{Fama et French} (1992) augmenté du facteur momentum de \livre{Carhart} (1996) :
+        \begin{align*}
+            r_{it} - r_{ft} &= \alpha_0 + \beta_{MKT}(r_{MKT,t} - r_{ft}) \\
+            &\quad + \beta_{SMB} \,\text{SMB}_t + \beta_{HML} \,\text{HML}_t \\
+            &\quad + \beta_{MOM} \,\text{MOM}_t + e_{it}.
+        \end{align*}
+    \end{itemize}
+    \item \textbf{Coupes transversales :} On compare plusieurs firmes ou unités à un instant donné.  
+    \begin{itemize}
+        \item Exemple : la version en coupe transversale (cross-section) du modèle Fama-French-Carhart :
+        \begin{align*}
+            \overline{r}_i &= \gamma_0 + \gamma_M \beta_{MKT} + \gamma_S \beta_{SMB} \\
+            &\quad + \gamma_H \beta_{HML} + \gamma_{MOM} \beta_{MOM} + u_i.
+        \end{align*}
+    \end{itemize}
+    \item \textbf{Données de panel (panel data) :} Combinaison des deux précédentes, généralement riches en information et de plus en plus utilisées en finance (notamment en finance d’entreprise). Nous verrons des exemples en détail dans la deuxième partie du cours.
+\end{enumerate}
+
+\subsection{Les Prix et les Rendements}
+
+\textit{\livre{Campbell, Lo et MacKinlay} (chapitre 1)}
+
+Même si l’on observe des prix sur les marchés financiers, la majorité des analyses économétriques en finance se font sur les \textbf{rendements} :
+
+\begin{itemize}
+    \item Les rendements ne dépendent pas de la taille absolue de l’investissement (ils sont \emph{scale-free}).
+    \item Leurs propriétés statistiques sont plus attrayantes (les rendements sont souvent \emph{stationnaires}, contrairement aux prix).
+\end{itemize}
+
+\subsubsection{Définitions du Rendement d’un Actif}
+
+Avec dividende :
+\begin{align*}
+    R_t &= \frac{P_t + D_t}{P_{t-1}} - 1,
+\end{align*}
+où \(R_t\) est le rendement, \(P_t\) et \(P_{t-1}\) sont respectivement les prix à la période \(t\) et \(t-1\), et \(D_t\) le dividende versé à la période \(t\).
+
+Un rendement est toujours associé à une période définie pour être informatif. Les formules peuvent se généraliser à plusieurs périodes. On utilise parfois l’approximation de Taylor pour faciliter les calculs.
+
+On définit souvent les \textbf{rendements logarithmiques} (\(r_t\)) comme le logarithme naturel du \emph{rendement brut} :
+\begin{align*}
+    r_t &= \ln \left( \frac{P_t + D_t}{P_{t-1}} \right).
+\end{align*}
+
+\textbf{Note :} La section A-4b de \livre{Wooldridge} présente un rappel sur les logarithmes et leurs propriétés en économie et finance (lecture fortement recommandée).
+
+\subsubsection{Rendements Excédentaires}
+
+On travaille souvent \emph{en excédent} du taux de rendement sans risque \(r_{Ft}\) :
+\begin{align*}
+    R_t^{\text{excédentaire}} &= R_t - r_{Ft}.
+\end{align*}
+
+% ------------------------------------------------------------------------
+% SECTION 3 : Incertitude
+% ------------------------------------------------------------------------
+\section{Incertitude}
+
+\textit{\livre{Campbell, Lo et MacKinlay} (chapitres 1-2)}
+
+\begin{itemize}
+    \item L’incertitude sur les rendements futurs est le sujet central de l’étude et de la modélisation des rendements financiers.
+    \item Il est essentiel de comprendre la nature et les sources d’incertitude dans les modèles financiers.
+    \item Les distributions décrivant cette incertitude sont présentées ci-dessous.
+\end{itemize}
+
+\subsection{Distribution Marginale, Conditionnelle et Jointe des Rendements}
+
+\subsubsection{Distribution Jointe des Rendements Financiers}
+
+Soient \(N\) actifs financiers en date \(t\), chacun ayant un rendement \(R_{it}\). De façon générale, la distribution jointe des rendements est décrite par la fonction \(G\) :
+\begin{align*}
+    G(x; \theta) &= P\bigl(R_{i1}, \dots, R_{iN} ; x, \theta\bigr),
+\end{align*}
+où \(x\) est un vecteur de variables d’état résumant l’environnement économique, et \(\theta\) est un vecteur de paramètres. Souvent, on omet \(\theta\) par simplification.
+
+Toute la connaissance sur les actifs financiers et sur \(x\) est contenue dans \(G\). Une définition possible de l’économétrie financière est donc l’inférence statistique faite sur \(\theta\) à partir de la réalisation \(\{R_{it}\}\).
+
+\subsubsection{Distribution Conditionnelle des Rendements Financiers}
+
+On étudie parfois la \emph{distribution conditionnelle} d’un actif \(i\) donné :
+\begin{align*}
+    F(R_{it} \mid R_{i1}, \dots, R_{it-1}; \theta).
+\end{align*}
+Les rendements peuvent être dépendants dans le temps via l’évolution de leurs distributions conditionnelles. En imposant des restrictions sur \(F_{it}(\cdot)\), on peut estimer les paramètres \(\theta\). Exemple : le modèle de \emph{marche aléatoire}.
+
+\subsubsection{Distribution Inconditionnelle}
+
+Lorsque les distributions inconditionnelle et conditionnelle diffèrent, la distribution conditionnelle contient évidemment plus d’information pour la prévision des rendements.
+
+\subsubsection{Distribution Lognormale}
+
+Une alternative à l’hypothèse de normalité des rendements est l’hypothèse de \emph{lognormalité}.  
+On suppose \(\{r_{it}\}\) i.i.d. normaux :
+\begin{align*}
+    r_{it} &\sim \mathcal{N}(\mu_i, \sigma^2),
+\end{align*}
+avec
+\begin{align*}
+    r_t &\equiv \ln(1 + R_t).
+\end{align*}
+
+Sous cette hypothèse, la moyenne et la variance de \(R_{it}\) sont :
+\begin{align*}
+    E[R_{it}] &= e^{\mu_i + \tfrac{\sigma^2}{2}} - 1, \\
+    \text{Var}(R_{it}) &= \bigl(e^{\sigma^2} - 1\bigr)\,e^{2\mu_i + \sigma^2}.
+\end{align*}
+
+Le modèle lognormal respecte les contraintes naturelles sur les ventes à découvert. En revanche, les moments d’ordre supérieur posent problème : la normale a un skewness (\(\mu_3\)) de 0 et une kurtosis (\(\mu_4\)) de 3, alors que les rendements empiriques montrent généralement \emph{un peu} d’asymétrie et \emph{beaucoup} de kurtosis (queues épaisses).
+
+\subsubsection{Estimation des Moments dans un Échantillon}
+
+Pour estimer la moyenne (\(\hat{\mu}\)), la variance (\(\hat{\sigma}^2\)), l’asymétrie (\(\hat{S}\)) et la kurtosis (\(\hat{K}\)) d’un échantillon :
+\begin{align*}
+    \hat{\mu} &= \frac{1}{N} \sum_{i=1}^N R_i, \\
+    \hat{\sigma}^2 &= \frac{1}{N-1} \sum_{i=1}^N (R_i - \hat{\mu})^2, \\
+    \hat{S} &= \frac{N}{(N-1)(N-2)} \sum_{i=1}^N \left( \frac{R_i - \hat{\mu}}{\hat{\sigma}} \right)^3, \\
+    \hat{K} &= \frac{N(N+1)}{(N-1)(N-2)(N-3)} \sum_{i=1}^N \left( \frac{R_i - \hat{\mu}}{\hat{\sigma}} \right)^4 - 3.
+\end{align*}
+
+% ------------------------------------------------------------------------
+% SECTION 4 : Marche Aléatoire et Prévisibilité
+% ------------------------------------------------------------------------
+\section{Marche Aléatoire et Prévisibilité}
+
+\textit{\livre{Campbell, Lo et MacKinlay} (chapitre 2)}
+
+\begin{itemize}
+    \item Les rendements sont-ils prévisibles ?
+    \item S’ils sont prévisibles, on s’éloigne d’un modèle de marche aléatoire.
+    \item Paradoxe : plus les marchés sont efficients, plus les rendements ressemblent à une marche aléatoire, et plus ils sont difficiles à prévoir.
+    \item L’investisseur s’intéresse souvent aux réalisations passées des rendements pour tenter de prévoir.
+\end{itemize}
+
+\subsection{Analyse Technique}
+
+\begin{itemize}
+    \item Une règle simple : la \emph{règle du filtre}.
+    \item \livre{Alexander} (1961, 1964) : acheter un actif lorsqu’il s’apprécie de \(x\%\) par rapport à un point bas récent, et vendre lorsqu’il baisse de \(x\%\) par rapport à un point haut récent.
+    \item En comparant cette règle avec une stratégie de \emph{buy and hold}, on peut évaluer si une tendance boursière exploitable existe.
+    \item \livre{Alexander} conclut à l’existence de grandes tendances, mais \livre{Fama} (1965) et \livre{Fama et Blume} (1966) ajustent ces résultats pour les coûts de transaction et concluent que la règle du filtre n’est pas profitable.
+    \item La littérature sur les anomalies boursières est très vaste ; \livre{Harvey, Liu et Zhu} (2015) en répertorient plus de 300.
+\end{itemize}
+
+% ------------------------------------------------------------------------
+% SECTION 5 : Caractéristiques Empiriques des Séries Financières
+% ------------------------------------------------------------------------
+\section{Caractéristiques Empiriques des Séries Financières}
+
+\subsection{Description}
+
+\begin{itemize}
+    \item \(p_t\) : prix d’un actif,
+    \item \(r_t\) : rendement \emph{logarithmique} correspondant.
+\end{itemize}
+
+Le rendement \(r_t\) est la \emph{différence première} de \(\ln p_t\) :
+\begin{align*}
+    r_t &= \ln p_t - \ln p_{t-1} = \ln(1 + R_t),
+\end{align*}
+avec
+\begin{align*}
+    R_t &= \frac{p_t - p_{t-1}}{p_{t-1}}.
+\end{align*}
+
+\subsection{Stationnarité}
+
+Les prix \(p_t\) sont généralement non stationnaires (au sens du second ordre), tandis que les rendements \(r_t\) ont tendance à être stationnaires.
+
+\subsection{Autocorrélations des Carrés des Variations de Prix}
+
+La série \(\{r_t^2\}\) (carrés des rendements) présente souvent de fortes autocorrélations, alors que les autocorrélations simples \(\{r_t\}\) sont très faibles. L’absence d’autocorrélation des rendements (bruts ou log) est souvent mise en lien avec l’hypothèse d’efficience des marchés : toute information pertinente serait déjà incorporée dans le prix actuel.
+
+\subsection{Queues de Distribution Épaisses}
+
+L’hypothèse de normalité des rendements est souvent réfutée empiriquement. Les queues des distributions empiriques sont plus épaisses que celles d’une loi normale (distributions \emph{leptokurtiques}). Le \emph{degré d’excès de kurtosis} se mesure par :
+\begin{align*}
+    K_u &= \mu_4 - 3,
+\end{align*}
+où \(\mu_4\) est le moment centré d’ordre 4. Si \(K_u > 0\), la distribution est leptokurtique (queues épaisses).
+
+\subsection{Asymétrie des Rendements}
+
+Les cours affichent souvent davantage de mouvements forts à la baisse qu’à la hausse. Le \emph{coefficient d’asymétrie} (\emph{skewness}) est le moment centré d’ordre 3 normalisé par \(\sigma^3\).
+\begin{align*}
+    \mu_3 &= E[(X - E(X))^3], \\
+    S_k &= \frac{\mu_3}{\sigma^3}.
+\end{align*}
+
+\subsection{Paquets (Clusters) de Volatilité}
+
+Les rendements montrent souvent une \emph{volatilité conditionnelle} : de grands mouvements de prix ont tendance à être suivis par d’autres grands mouvements (positifs ou négatifs). Les rendements sont hétéroscédastiques dans le temps.
+
+\subsection{Queues Conditionnelles Épaisses}
+
+Même après correction pour la volatilité conditionnelle (par exemple via un modèle GARCH), les résidus restent souvent leptokurtiques.
+
+\subsection{Effet de Levier}
+
+Un choc négatif (baisse des cours) a souvent un effet plus marqué sur la volatilité qu’un choc positif de même amplitude. C’est ce qu’on appelle l’effet de levier (\emph{leverage effect}).
+
+\subsection{Saisonnalité}
+
+Les rendements présentent des effets de saisonnalité, par exemple l’\emph{effet janvier} ou l’\emph{effet week-end}. Au marché américain, on observe que le rendement moyen mensuel peut être plus élevé en janvier qu’aux autres mois.
+
+\textit{Source :}  
+Keim, D. (1982). “Size Related Anomalies and Stock Return Seasonality.” \emph{Journal of Financial Economics}, 12, 13–32.
+
+% ------------------------------------------------------------------------
+% SECTION 6 : Bibliographie
+% ------------------------------------------------------------------------
+\section*{Bibliographie}
+\addcontentsline{toc}{section}{Bibliographie}
+
+\begin{thebibliography}{99}
+
+\bibitem{GujaratiPorter}
+Gujarati, D. N., \& Porter, D. C. (2009). \textit{Basic Econometrics}. McGraw-Hill.
+
+\bibitem{Wooldridge}
+Wooldridge, J. M. (2010). \textit{Econometric Analysis of Cross Section and Panel Data}. MIT Press.
+
+\bibitem{FamaFrench}
+Fama, E. F., \& French, K. R. (1992). "The Cross-Section of Expected Stock Returns." \emph{Journal of Finance}, 47(2), 427-465.
+
+\bibitem{Carhart}
+Carhart, M. M. (1996). "On Persistence in Mutual Fund Performance." \emph{Journal of Finance}, 51(1), 53-73.
+
+\bibitem{CampbellLoMacKinlay}
+Campbell, J. Y., Lo, A. W., \& MacKinlay, A. C. (1997). \textit{The Econometrics of Financial Markets}. Princeton University Press.
+
+\bibitem{Alexander}
+Alexander, C. (1961, 1964). \textit{Market Technical Analysis}. Irwin.
+
+\bibitem{Fama1965}
+Fama, E. F. (1965). "The Behavior of Stock-Market Prices." \emph{Journal of Business}, 38(1), 34-105.
+
+\bibitem{FamaBlume}
+Fama, E. F., \& Blume, M. E. (1966). "Filter Rules and Stock Market Trading." \emph{The Journal of Business}, 39(1), 226-241.
+
+\bibitem{HarveyLiuZhu}
+Harvey, C. R., Liu, Y., \& Zhu, H. (2015). " … and the Cross-Section of Expected Returns." \emph{Review of Financial Studies}, 28(1), 1-45.
+
+\bibitem{Keim}
+Keim, D. B. (1982). “Size Related Anomalies and Stock Return Seasonality.” \emph{Journal of Financial Economics}, 12, 13–32.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,462 @@
+\documentclass{beamer}
+
+% Encodages et langues
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} % Ajout de l'encodage UTF-8
+\usepackage[french]{babel}
+
+% Packages supplémentaires
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs} % Pour des tableaux plus esthétiques
+\usepackage{hyperref} % Pour les hyperliens
+\usepackage{pgfplots} % Pour les graphiques avancés
+\pgfplotsset{compat=1.17}
+
+% Thème et couleurs
+\usetheme{Madrid} % Thème moderne et professionnel
+\usecolortheme{seagull} % Palette de couleurs harmonieuse
+
+% Police
+\usepackage{lmodern} % Police améliorée
+
+% Informations sur la présentation
+\title[S02 Régression]{Révision Mathématique\\ \large Séance 1}
+\subtitle{GSF-6053 : Économétrie Financière}
+\author[Simon-Pierre Boucher]{Simon-Pierre Boucher\inst{1}}
+\institute[Université Laval]
+{
+  \inst{1}%
+  Département de Finance, Assurance et Immobilier\\
+  Faculté des Sciences de l'Administration\\
+  Université Laval
+}
+\date[Hiver 2025]{14 janvier 2025}
+
+% Configuration du pied de page avec logo en bas à droite
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.7\paperwidth,ht=2ex,dp=1ex,left]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.3\paperwidth,ht=2ex,dp=1ex,right]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{0.5em}
+      \insertframenumber{} / \inserttotalframenumber\hspace*{0.5em}
+      \raisebox{0.2cm}{\includegraphics[height=0.6cm]{logo_universite_laval.png}} % Ajustement du logo
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamertemplate{navigation symbols}{} % Supprime les symboles de navigation par défaut
+
+\begin{document}
+
+% Page de titre
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Section Préambule
+\section{Références et Préambule}
+
+\begin{frame}
+  \frametitle{Préambule}
+  Ce document présente une révision des concepts mathématiques de base utiles au cours. L'objectif est de revoir certaines propriétés qui peuvent être nécessaires pour le cours, sans couvrir exhaustivement toutes les annexes.
+  
+  \vspace{0.5cm}
+  
+  \textbf{Références :}
+  \begin{itemize}
+    \item Wooldridge (Sections A, B et D)
+    \item Gujarati et Porter (Sections A et B)
+    \item Greene (Sections A et B)
+  \end{itemize}
+\end{frame}
+
+% Section Statistique de Base
+\section{Révision de Statistique de Base}
+
+\begin{frame}
+  \frametitle{Propriétés des Sommations}
+  \begin{itemize}
+    \item Les constantes peuvent sortir des sommations :
+    \[
+    \sum_{i=1}^{n} (a + b x_i) = na + b \sum_{i=1}^{n} x_i
+    \]
+    \item Exemple :
+    \[
+    \sum_{i=1}^{5} (2 + 3x_i) = 5 \times 2 + 3 \sum_{i=1}^{5} x_i = 10 + 3 \sum_{i=1}^{5} x_i
+    \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Double Sommation et Commutation des Opérateurs}
+  \begin{itemize}
+    \item Les opérateurs de sommation sont interchangeables dans une double sommation :
+    \[
+    \sum_{i=1}^{N} \sum_{j=1}^{M} x_{ij} = \sum_{j=1}^{M} \sum_{i=1}^{N} x_{ij}
+    \]
+    \item Exemple : Calculer la somme des éléments d'une matrice \(3 \times 2\).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Propriétés des Sommations (suite)}
+  \begin{itemize}
+    \item La moyenne échantillonnale est :
+    \[
+    \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i
+    \]
+    \item La somme des déviations par rapport à la moyenne est nulle :
+    \[
+    \sum_{i=1}^{n} (x_i - \bar{x}) = 0
+    \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Somme des Carrés des Déviations}
+  \begin{itemize}
+    \item La somme des carrés des déviations par rapport à la moyenne :
+    \[
+    \sum_{i=1}^{n} (x_i - \bar{x})^2 = \sum_{i=1}^{n} x_i^2 - n\bar{x}^2
+    \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Caractéristiques des Distributions de Probabilité}
+  \begin{itemize}
+    \item \textbf{Espérance} :
+    \[
+    \mathbb{E}(X) = \sum x_i f(x)
+    \]
+    \item \textbf{Variance} :
+    \[
+    \text{Var}(X) = \mathbb{E}[(X - \mu)^2]
+    \]
+    \item \textbf{Covariance} et \textbf{Corrélation} :
+    \[
+    \text{Cov}(X,Y) = \mathbb{E}[(X - \mu_X)(Y - \mu_Y)]
+    \]
+    \[
+    \rho = \frac{\text{Cov}(X,Y)}{\sqrt{\text{Var}(X)\text{Var}(Y)}}
+    \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Les Fonctions de Densité}
+  \begin{itemize}
+    \item \textbf{Variables discrètes} : Probabilités représentées par des fonctions de densité discrètes (par exemple, la somme de deux dés).
+    \item \textbf{Variables continues} : La fonction de densité doit satisfaire :
+    \[
+    f(x) \geq 0, \quad \int_{-\infty}^{\infty} f(x) \, dx = 1
+    \]
+    \item \textbf{Exemple} : La loi normale, représentée par une courbe en cloche.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Densité Conditionnelle}
+  \begin{itemize}
+    \item La fonction de densité conditionnelle est définie par :
+    \[
+    f(x|y) = \frac{f(x,y)}{f(y)}
+    \]
+    \item Cette relation décrit comment la variable \(X\) influence \(Y\) en fonction de la densité conjointe des deux variables.
+    \item \textbf{Exemple :} Si \(X\) et \(Y\) représentent respectivement la taille et le poids d'individus, \(f(x|y)\) montre la distribution de la taille pour un poids donné.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Indépendance de Variables}
+  \begin{itemize}
+    \item Deux variables sont indépendantes si la densité jointe est égale au produit des densités marginales :
+    \[
+    f(x,y) = f(x)f(y)
+    \]
+    \item \textbf{Implication :} Connaître la valeur de \(X\) ne donne aucune information sur \(Y\) et vice versa.
+    \item \textbf{Exemple :} Le lancer de deux dés équitables où le résultat de l'un n'affecte pas l'autre.
+  \end{itemize}
+\end{frame}
+
+% Section Algèbre Matricielle
+\section{Algèbre Matricielle}
+
+\begin{frame}
+  \frametitle{Matrices et Opérations de Base}
+  \begin{itemize}
+    \item Une matrice \(A\) est représentée comme suit :
+    \[
+    A = \begin{bmatrix} 
+    a_{11} & a_{12} & \dots & a_{1N} \\ 
+    a_{21} & a_{22} & \dots & a_{2N} \\ 
+    \vdots & \vdots & \ddots & \vdots \\ 
+    a_{M1} & a_{M2} & \dots & a_{MN} 
+    \end{bmatrix}
+    \]
+    \item Les opérations de base incluent :
+      \begin{itemize}
+        \item \textbf{Addition} : \((A + B)_{ij} = A_{ij} + B_{ij}\)
+        \item \textbf{Soustraction} : \((A - B)_{ij} = A_{ij} - B_{ij}\)
+        \item \textbf{Transposition} : \(A^{\prime}\) est obtenue en échangeant les lignes et les colonnes de \(A\).
+        \item \textbf{Multiplication} : \((AB)_{ik} = \sum_{j=1}^{N} A_{ij}B_{jk}\)
+        \item \textbf{Inversion} : Si \(A\) est inversible, \(A^{-1}\) est telle que \(AA^{-1} = I\).
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Exemple d'Addition et de Multiplication de Matrices}
+  \[
+  A = \begin{bmatrix} 
+  1 & 2 \\ 
+  3 & 4 
+  \end{bmatrix}, \quad
+  B = \begin{bmatrix} 
+  5 & 6 \\ 
+  7 & 8 
+  \end{bmatrix}
+  \]
+  \[
+  A + B = \begin{bmatrix} 
+  6 & 8 \\ 
+  10 & 12 
+  \end{bmatrix}, \quad
+  AB = \begin{bmatrix} 
+  19 & 22 \\ 
+  43 & 50 
+  \end{bmatrix}
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Transposition des Matrices}
+  \begin{itemize}
+    \item La transposition d'un produit de matrices suit la règle :
+    \[
+    (AB)^{\prime} = B^{\prime} A^{\prime}
+    \]
+    \item \textbf{Exemple :}
+    \[
+    A = \begin{bmatrix} 
+    1 & 2 \\ 
+    3 & 4 
+    \end{bmatrix}, \quad
+    B = \begin{bmatrix} 
+    5 & 6 \\ 
+    7 & 8 
+    \end{bmatrix}
+    \]
+    \[
+    AB = \begin{bmatrix} 
+    19 & 22 \\ 
+    43 & 50 
+    \end{bmatrix}, \quad
+    (AB)^{\prime} = \begin{bmatrix} 
+    19 & 43 \\ 
+    22 & 50 
+    \end{bmatrix}
+    \]
+    \[
+    B^{\prime} = \begin{bmatrix} 
+    5 & 7 \\ 
+    6 & 8 
+    \end{bmatrix}, \quad
+    A^{\prime} = \begin{bmatrix} 
+    1 & 3 \\ 
+    2 & 4 
+    \end{bmatrix}
+    \]
+    \[
+    B^{\prime}A^{\prime} = \begin{bmatrix} 
+    19 & 43 \\ 
+    22 & 50 
+    \end{bmatrix} = (AB)^{\prime}
+    \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Rang d'une Matrice}
+  \begin{itemize}
+    \item \textbf{Définition} : Le rang d'une matrice est le nombre de colonnes ou de lignes linéairement indépendantes.
+    \item \textbf{Exemple} :
+      \[
+      A = \begin{bmatrix} 
+      1 & 2 & 3 \\ 
+      4 & 5 & 6 \\ 
+      7 & 8 & 9 
+      \end{bmatrix}
+      \]
+      \[
+      \text{Rang}(A) = 2 \quad (\text{les lignes sont linéairement dépendantes})
+      \]
+    \item \textbf{Importance} :
+      \begin{itemize}
+        \item Détermine la solution des systèmes linéaires.
+        \item Indique la dimension de l'espace engendré par les colonnes ou les lignes.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Inversibilité des Matrices}
+  \begin{itemize}
+    \item \textbf{Définition} : Une matrice est inversible si elle est de plein rang, c'est-à-dire que son rang est égal à son nombre de lignes (ou de colonnes).
+    \item \textbf{Exemple} : 
+    \[
+    B = \begin{bmatrix} 
+    1 & 2 \\ 
+    3 & 4 
+    \end{bmatrix}
+    \]
+    \[
+    \text{det}(B) = 1 \times 4 - 2 \times 3 = -2 \neq 0 \quad \Rightarrow \quad B \text{ est inversible}
+    \]
+    \[
+    B^{-1} = \frac{1}{\text{det}(B)} \begin{bmatrix} 
+    4 & -2 \\ 
+    -3 & 1 
+    \end{bmatrix} = \begin{bmatrix} 
+    -2 & 1 \\ 
+    1.5 & -0.5 
+    \end{bmatrix}
+    \]
+    \item \textbf{Propriétés importantes} :
+      \[
+      A \cdot A^{-1} = I, \quad (AB)^{-1} = B^{-1} A^{-1}
+      \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Matrice Symétrique et Diagonale}
+  \begin{itemize}
+    \item \textbf{Matrice symétrique} : Une matrice \(A\) est symétrique si \(A = A^{\prime}\). \\
+    \textbf{Exemple} : 
+    \[
+    A = \begin{bmatrix} 
+    1 & 2 \\ 
+    2 & 3 
+    \end{bmatrix}
+    \]
+    \item \textbf{Applications} : 
+      \begin{itemize}
+        \item Matrices de variance-covariance en statistiques.
+        \item Matrices de coefficients dans les modèles de régression.
+      \end{itemize}
+    \item \textbf{Matrice diagonale} : Contient des éléments uniquement sur la diagonale principale.
+    \item \textbf{Exemple} :
+    \[
+    D = \begin{bmatrix} 
+    4 & 0 & 0 \\ 
+    0 & 5 & 0 \\ 
+    0 & 0 & 6 
+    \end{bmatrix}
+    \]
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Matrices Idempotentes}
+  \begin{itemize}
+    \item \textbf{Définition} : Une matrice \(A\) est idempotente si :
+    \[
+    A \cdot A = A
+    \]
+    \item \textbf{Exemple} :
+    \[
+    A = \begin{bmatrix} 
+    1 & 0 \\ 
+    0 & 0 
+    \end{bmatrix}
+    \]
+    \[
+    A^2 = \begin{bmatrix} 
+    1 & 0 \\ 
+    0 & 0 
+    \end{bmatrix} = A
+    \]
+    \item \textbf{Propriétés} :
+      \begin{itemize}
+        \item Les matrices idempotentes sont singulières sauf si elles sont des matrices identité.
+        \item La trace d'une matrice idempotente est égale à son rang.
+      \end{itemize}
+    \item \textbf{Application} : 
+      \begin{itemize}
+        \item Matrices de projection en régression linéaire.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dérivées et Notation Matricielle}
+  \begin{itemize}
+    \item Dérivée d’un scalaire multiplié par une constante :
+    \[
+    \frac{d(2x)}{dx} = 2
+    \]
+    \item En notation matricielle, les dimensions de la dérivée sont \(1 \times n\) pour le cas du \textit{numerator layout}.
+    \item Attention aux notations dans les ouvrages, par exemple, le livre de Wooldridge utilise le \textit{numerator layout}, tandis que d'autres utilisent le \textit{denominator layout}.
+    \item \textbf{Notation Numérateur vs Notation Dénominateur :}
+      \begin{itemize}
+        \item \textbf{Numerator Layout} : Dérivée vue comme un vecteur ligne.
+        \item \textbf{Denominator Layout} : Dérivée vue comme un vecteur colonne.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Exemples de Dérivées Matricielles}
+  \begin{itemize}
+    \item \textbf{Dérivée d’un produit de matrices} : 
+    \[
+    \frac{\partial}{\partial X} (X^{\prime} A X) = 2 A X
+    \]
+    \item \textbf{Interprétation} :
+      \begin{itemize}
+        \item Si \(X\) est un vecteur colonne, alors \(\frac{\partial}{\partial X} (X^{\prime} A X)\) est un vecteur colonne.
+        \item Selon la notation adoptée, cela peut être représenté différemment.
+      \end{itemize}
+    \item \textbf{Application} : 
+      \begin{itemize}
+        \item Utilisée dans l'estimation des paramètres en régression linéaire.
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+% Section Exercices de Révision
+\section{Exercices de Révision}
+
+\begin{frame}
+  \frametitle{Exercice 1 : Calcul de la Moyenne et de la Variance}
+  \begin{itemize}
+    \item \textbf{Données} : \( X = \{2, 4, 6, 8, 10\} \)
+    \item \textbf{Calculer} :
+      \begin{enumerate}
+        \item La moyenne échantillonnale \(\bar{X}\).
+        \item La variance échantillonnale \(\text{Var}(X)\).
+      \end{enumerate}
+    \item \textbf{Solution} : 
+      \begin{itemize}
+        \item \(\bar{X} = \frac{2 + 4 + 6 + 8 + 10}{5} = 6\)
+        \item \(\text{Var}(X) = \frac{(2-6)^2 + (4-6)^2 + (6-6)^2 + (8-6)^2 + (10-6)^2}{5} = \frac{16 + 4 + 0 + 4 + 16}{5} = 8\)
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Questions de Révision}
+  \begin{enumerate}
+    \item Expliquez la différence entre la covariance et la corrélation.
+    \item Pourquoi une matrice idempotente n'est-elle pas de plein rang ?
+    \item Décrivez une application pratique des matrices de variance-covariance en économétrie.
+    \item Comment la méthode des moindres carrés minimise-t-elle l'erreur de prédiction ?
+  \end{enumerate}
+\end{frame}
+
+\end{document}

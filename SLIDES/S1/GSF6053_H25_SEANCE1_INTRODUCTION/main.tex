@@ -1,0 +1,248 @@
+\documentclass{beamer}
+
+% Encodages et langues
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+% Packages supplémentaires
+\usepackage{graphicx}
+\usepackage{amsmath, amssymb}
+\usepackage{booktabs} % Pour des tableaux plus esthétiques
+\usepackage{hyperref} % Pour les hyperliens
+\usepackage{pgfplots} % Pour les graphiques avancés
+\pgfplotsset{compat=1.17}
+
+% Thème et couleurs
+\usetheme{default} % Un thème plus moderne et professionnel
+\usecolortheme{seagull} % Palette de couleurs harmonieuse
+
+% Police
+\usepackage{lmodern} % Police améliorée
+
+% Informations sur la présentation
+\title[S02 Régression et MCO]{Introduction\\ (Séance 1)}
+\subtitle{GSF-6053 : Économétrie Financière}
+\author[SP. Boucher]{Simon-Pierre Boucher\inst{1}}
+\institute[Université Laval]
+{
+  \inst{1}%
+  Département de Finance, Assurance et Immobilier\\
+  Faculté des Sciences de l'Administration\\
+  Université Laval
+}
+\date[Hiver 2025]{14 Janvier 2025}
+
+% Configuration du pied de page avec logo en bas à droite
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.7\paperwidth,ht=2ex,dp=1ex,left]{author in head/foot}%
+      \usebeamerfont{author in head/foot}\insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.3\paperwidth,ht=2ex,dp=1ex,right]{date in head/foot}%
+      \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{0.5em}
+      \insertframenumber{} / \inserttotalframenumber\hspace*{0.5em}
+      \raisebox{0.2cm}{\includegraphics[height=0.6cm]{logo_universite_laval.png}} % Ajustement du logo
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+\setbeamertemplate{navigation symbols}{} % Supprime les symboles de navigation par défaut
+
+\begin{document}
+
+% Page de titre
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Section Introduction au Cours
+\section{Introduction au Cours}
+
+\begin{frame}
+  \frametitle{Définition de l'Économétrie}
+  L'économétrie est la branche des sciences économiques qui, à l'aide des outils mathématiques, statistiques et informatiques, s'efforce de :
+  \begin{itemize}
+    \item \textbf{Comprendre les réalités économiques} : Identifier des relations causales entre variables économiques et financières.
+    \item \textbf{Tester des théories économiques} : Vérifier les hypothèses économiques à travers l'analyse des données empiriques.
+    \item \textbf{Prévision des variables économiques et financières} : Prédire les comportements futurs à partir de modèles basés sur des données passées.
+    \item \textbf{Aide à la décision} : Formuler des recommandations en matière de politiques économiques et de gestion des risques financiers.
+  \end{itemize}
+  En finance, l’économétrie se concentre sur les séries temporelles et les modèles de prévision des rendements financiers.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Objectifs en Finance}
+  Les objectifs pratiques en économétrie financière incluent :
+  \begin{itemize}
+    \item \textbf{Identification des récurrences statistiques} : Trouver et modéliser des schémas récurrents dans les séries temporelles.
+    \item \textbf{Test de la validité des modèles théoriques} : Tester si les théories financières et économiques sont vérifiables avec des données réelles.
+    \item \textbf{Estimation des facteurs de risque} : Identifier les facteurs influençant les rendements financiers, comme les modèles de Fama et French.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Modèles Économétriques}
+  Le processus d'analyse économétrique suit des étapes rigoureuses :
+  \begin{enumerate}
+    \item \textbf{Formulation d'une hypothèse théorique} : Basée sur des principes économiques.
+    \item \textbf{Spécification du modèle mathématique} : Traduire l'hypothèse en équations.
+    \item \textbf{Collecte de données} : Recueillir des données empiriques pour tester le modèle.
+    \item \textbf{Estimation des paramètres du modèle} : Utiliser des méthodes d'estimation pour obtenir des valeurs numériques des paramètres.
+    \item \textbf{Test d'hypothèses} : Vérifier la validité du modèle.
+    \item \textbf{Prévisions et implications économiques} : Utiliser le modèle pour faire des prévisions et proposer des recommandations pratiques.
+  \end{enumerate}
+  Les modèles économétriques incluent des approches classiques et bayésiennes.
+\end{frame}
+
+% Section Description des Rendements Financiers
+\section{Description des Rendements Financiers}
+
+\begin{frame}
+  \frametitle{Les Données Utilisées en Économétrie Financière}
+  En économétrie financière, les données utilisées peuvent être classées en trois catégories :
+  \begin{itemize}
+    \item \textbf{Séries temporelles} : Données observées sur une période donnée. Exemples : rendements journaliers, indices boursiers.
+    \item \textbf{Coupes transversales} : Données observées à un moment donné pour plusieurs entités (entreprises, actifs financiers).
+    \item \textbf{Données panel} : Combinaison de séries temporelles et de coupes transversales, permettant d'analyser les effets à la fois dans le temps et entre les entités.
+  \end{itemize}
+  Chaque type de données requiert des méthodes d'estimation adaptées.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Prix et Rendements}
+  Les rendements financiers sont préférés à l’analyse des prix car :
+  \begin{itemize}
+    \item Les rendements sont \textbf{scale-free}, c'est-à-dire indépendants de la taille de l'investissement.
+    \item Ils ont des \textbf{propriétés statistiques} plus simples, comme la stationnarité, qui facilite l'analyse économétrique.
+  \end{itemize}
+  \textbf{Formules des rendements} :
+  \begin{equation}
+    R_t = \frac{P_t}{P_{t-1}} - 1
+  \end{equation}
+  Avec dividende :
+  \begin{equation}
+    R_t = \frac{P_t + D_t}{P_{t-1}} - 1
+  \end{equation}
+  Les rendements peuvent aussi être calculés de façon continue en utilisant les logarithmes naturels :
+  \begin{equation}
+    r_t = \log \left( \frac{P_t}{P_{t-1}} \right)
+  \end{equation}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Rendements Excédentaires}
+  Les rendements excédentaires sont calculés par rapport au taux sans risque \( R_{Ft} \), ce qui permet d'analyser la performance d'un actif au-delà de l'inflation ou des rendements sans risque :
+  \begin{equation}
+    Z_t = R_t - R_{Ft}
+  \end{equation}
+\end{frame}
+
+% Section Incertitude
+\section{Incertitude}
+
+\begin{frame}
+  \frametitle{La Distribution des Rendements}
+  Les rendements financiers peuvent suivre différentes distributions :
+  \begin{itemize}
+    \item \textbf{Distribution jointe} : Modélisation de l'ensemble des rendements de plusieurs actifs à un moment donné.
+    \item \textbf{Distribution conditionnelle} : Modélisation des rendements d'un actif donné à un moment spécifique en fonction des rendements passés.
+    \item \textbf{Distribution inconditionnelle} : Modélisation sans prendre en compte les rendements passés.
+  \end{itemize}
+  \textbf{Formule de la distribution jointe} :
+  \[
+    G(R_{11}, R_{12}, \dots, R_{NT}; x \mid \theta)
+  \]
+  où \( x \) représente l'environnement économique et \( \theta \) les paramètres du modèle.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Log-Normalité des Rendements}
+  La log-normalité des rendements est souvent utilisée pour modéliser les séries financières, car elle permet de prendre en compte la non-normalité observée dans les données réelles.
+  \[
+    r_{it} \sim \mathcal{N}(\mu_i, \sigma_i^2)
+  \]
+  \[
+    \mathbb{E}[R_{it}] = e^{\mu_i + \frac{\sigma_i^2}{2}} - 1
+  \]
+  \[
+    \text{Var}[R_{it}] = e^{2\mu_i + \sigma_i^2} (e^{\sigma_i^2} - 1)
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Estimation des Moments d’un Échantillon}
+  Les moments d’un échantillon sont estimés par les formules suivantes :
+  \begin{itemize}
+    \item Moyenne :
+    \[
+      \hat{\mu} = \frac{1}{T} \sum_{t=1}^{T} \epsilon_t
+    \]
+    \item Variance :
+    \[
+      \hat{\sigma}^2 = \frac{1}{T} \sum_{t=1}^{T} (\epsilon_t - \hat{\mu})^2
+    \]
+    \item Skewness et Kurtosis :
+    \[
+      \hat{S} = \frac{1}{T\hat{\sigma}^3} \sum_{t=1}^{T} (\epsilon_t - \hat{\mu})^3
+    \]
+  \end{itemize}
+\end{frame}
+
+% Section Caractéristiques Empiriques des Séries Financières
+\section{Caractéristiques Empiriques des Séries Financières}
+
+\begin{frame}
+  \frametitle{Stationnarité des Séries Financières}
+  Les \textbf{prix d’actifs} suivent des processus non stationnaires au sens de la stationnarité du second ordre, alors que les \textbf{rendements} sont généralement stationnaires.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Autocorrélation des Carrés des Variations des Prix}
+  La série des carrés des rendements (\( r_t^2 \)) présente des autocorrélations importantes, ce qui signifie que les rendements élevés sont souvent suivis de rendements élevés. En revanche, les rendements eux-mêmes montrent peu d'autocorrélation.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Queues de Distribution Épaisses}
+  Les rendements financiers montrent des distributions \textbf{leptokurtiques}, où les queues sont plus épaisses que celles d'une distribution normale. Cette caractéristique est mesurée par le moment d'ordre 4 :
+  \[
+    \mu_4 = \mathbb{E}[(X - \mathbb{E}(X))^4]
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Asymétrie des Rendements}
+  Les rendements financiers présentent souvent une asymétrie. Cela peut être mesuré par le coefficient d'asymétrie \( S_k \) :
+  \[
+    S_k = \frac{\mu_3}{\sigma^3}
+  \]
+  où \( \mu_3 \) est le moment d'ordre 3. Les rendements sont souvent plus négatifs que positifs, ce qui reflète une asymétrie négative.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Effet de Levier}
+  L'effet de levier se réfère à une asymétrie dans la volatilité des rendements : les baisses de prix augmentent généralement plus la volatilité que les hausses.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Saisonnalité}
+  La \textbf{saisonnalité} se manifeste par des effets tels que :
+  \begin{itemize}
+    \item L'\textbf{effet janvier} : Les rendements sont souvent plus élevés en janvier.
+    \item L'\textbf{effet week-end} : Différence entre les rendements du vendredi soir et ceux du lundi matin.
+  \end{itemize}
+\end{frame}
+
+% Section Conclusion
+\section{Conclusion}
+
+\begin{frame}
+  \frametitle{Conclusion}
+  \begin{itemize}
+    \item Récapitulatif des concepts clés abordés dans la séance.
+    \item Importance de l'économétrie en finance pour la prise de décision et la prévision.
+    \item Perspectives pour les prochaines séances : approfondissement des modèles économétriques et applications pratiques.
+  \end{itemize}
+\end{frame}
+
+\end{document}
